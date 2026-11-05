@@ -1,0 +1,352 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   Automatic Tote Puller — UI revamp (theme overlay)
+   Loaded AFTER app.css. Rebuilds tokens + high-visibility surfaces only;
+   every class hook the JS uses is preserved. Identity: an ASRS control console —
+   backlit blue-slate panels, amber reserved for actions, teal "signal" for data.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Surfaces — deep blue-slate, never pure black */
+  --bg:            #0e1318;
+  --bg-2:          #0a0e12;
+  --surface:       #151c26;
+  --surface-2:     #1d2733;
+  --surface-3:     #26313f;
+  --border:        #2b3644;
+  --border-soft:   #212a36;
+
+  /* Ink */
+  --text:          #eaf1f8;
+  --muted:         #93a2b7;
+  --muted-dim:     #586477;
+
+  /* Action vs signal — two accents, used for different jobs */
+  --accent:        #ffb340;   /* amber: primary actions only (Start / Run / Release) */
+  --accent-strong: #ff9a1f;
+  --signal:        #36d6cf;   /* teal: data highlights, active tab, links */
+  --signal-dim:    #1f8a86;
+
+  /* Status */
+  --green:         #46d98a;
+  --yellow:        #f3c34d;
+  --red:           #ff5d5d;
+  --blue:          #5aa9ff;
+  --net-err:       #ff8a3d;
+  --skip-col:      #93a2b7;
+
+  /* Aliases used by the Tracker component's scoped styles */
+  --line:          #2b3644;
+  --err:           #ff5d5d;
+
+  /* Shape + depth */
+  --r-sm: 8px; --r: 13px; --r-lg: 18px; --r-pill: 999px;
+  --shadow-1: 0 1px 2px rgba(0,0,0,.4);
+  --shadow-2: 0 8px 24px -10px rgba(0,0,0,.65), 0 2px 6px rgba(0,0,0,.35);
+  --ring: 0 0 0 3px rgba(54,214,207,.22);
+
+  --display: "Space Grotesk", "Inter Tight", "Segoe UI", system-ui, sans-serif;
+  --sans:    "Inter Tight", "Inter", "Segoe UI", system-ui, sans-serif;
+  --mono:    "JetBrains Mono", "SF Mono", "Cascadia Code", ui-monospace, Menlo, monospace;
+}
+
+html, body {
+  background:
+    radial-gradient(1200px 500px at 75% -10%, rgba(54,214,207,.05), transparent 60%),
+    radial-gradient(900px 500px at 0% 0%, rgba(255,179,64,.045), transparent 55%),
+    var(--bg);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: .1px;
+}
+
+/* Thin lit accent line across the very top of the console */
+body::before {
+  content: ""; position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 50;
+  background: linear-gradient(90deg, var(--accent-strong), var(--accent) 22%, var(--signal) 70%, var(--signal-dim));
+  opacity: .9;
+}
+
+.shell { max-width: 1080px; padding: 30px 26px 56px; gap: 18px; }
+
+/* ── Header / control bar ─────────────────────────────────────────────────── */
+.app-header, .header {
+  background: linear-gradient(180deg, var(--surface), var(--surface) 70%, rgba(21,28,38,.6));
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 14px 18px;
+  box-shadow: var(--shadow-2);
+  margin-bottom: 2px;
+}
+.brand-mark {
+  width: 40px; height: 40px; border-radius: 11px;
+  background: linear-gradient(140deg, var(--accent), var(--accent-strong));
+  color: #2a1c00; font-family: var(--display); font-weight: 700; font-size: 15px;
+  box-shadow: 0 4px 14px -4px rgba(255,154,31,.6), inset 0 1px 0 rgba(255,255,255,.35);
+}
+.brand-text h1 { font-family: var(--display); font-size: 16px; font-weight: 600; letter-spacing: -.3px; }
+.subtitle { font-size: 10.5px; text-transform: uppercase; letter-spacing: .16em; color: var(--muted-dim); }
+
+.version-badge, .grafana-pill, .auth-pill, .status {
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--r-pill); padding: 5px 11px; font-size: 11px;
+  display: inline-flex; align-items: center; gap: 6px; color: var(--muted);
+}
+.version-badge {
+  font-family: var(--mono); font-weight: 700; letter-spacing: .04em;
+  color: var(--signal); border-color: rgba(54,214,207,.35); background: rgba(54,214,207,.10);
+}
+.dot, .status-dot, .grafana-status-dot { box-shadow: 0 0 0 3px rgba(255,255,255,.03); }
+.dot.ok  { background: var(--green); box-shadow: 0 0 10px rgba(70,217,138,.7); }
+.dot.bad { background: var(--red);   box-shadow: 0 0 10px rgba(255,93,93,.6); }
+
+/* ── Tab selector — segmented hardware switch ─────────────────────────────── */
+.tab-nav {
+  background: var(--bg-2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 5px; gap: 4px; box-shadow: inset 0 1px 3px rgba(0,0,0,.45);
+}
+.tab-btn {
+  border-radius: 9px; padding: 9px 12px; font-family: var(--display);
+  font-size: 13px; font-weight: 500; letter-spacing: .01em; color: var(--muted);
+  transition: color .15s, background .15s, box-shadow .15s;
+}
+.tab-btn:hover { color: var(--text); background: rgba(255,255,255,.03); }
+.tab-btn.active {
+  color: var(--text); font-weight: 600;
+  background: linear-gradient(180deg, var(--surface-3), var(--surface-2));
+  box-shadow: var(--shadow-1), inset 0 0 0 1px var(--border), 0 2px 0 -1px var(--signal);
+}
+.tab-btn.active::after {
+  content: ""; position: absolute; left: 22%; right: 22%; bottom: 3px; height: 2px;
+  border-radius: 2px; background: var(--signal); box-shadow: 0 0 8px rgba(54,214,207,.7);
+}
+.tab-icon { font-size: 15px; }
+.tab-count {
+  font-family: var(--mono); background: var(--bg-2); border: 1px solid var(--border);
+  color: var(--signal); border-radius: var(--r-pill);
+}
+
+/* ── Panels ───────────────────────────────────────────────────────────────── */
+.card, .stats-card, .progress-card, .priority-lane,
+.auto-status-bar, .coming-soon-panel, .grafana-section {
+  background: linear-gradient(180deg, var(--surface), rgba(21,28,38,.92));
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-2);
+  position: relative;
+}
+.card { padding: 16px; gap: 12px; }
+.stats-card { padding: 16px; }
+/* Backlit top edge that warms on hover */
+.card::before, .stats-card::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 1px; border-radius: var(--r) var(--r) 0 0;
+  background: linear-gradient(90deg, transparent, rgba(54,214,207,.5), transparent);
+  opacity: .5; transition: opacity .25s;
+}
+.card:hover::before, .stats-card:hover::before { opacity: 1; }
+.card-title, .stats-title, .log-title {
+  font-family: var(--display); font-size: 11px; font-weight: 600;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
+}
+
+/* ── Inputs ───────────────────────────────────────────────────────────────── */
+input, textarea, select, .mz-input, .log-search-input, .log-select {
+  background: var(--bg-2); border: 1px solid var(--border); color: var(--text);
+  border-radius: var(--r-sm); transition: border-color .15s, box-shadow .15s;
+}
+input:focus, textarea:focus, select:focus, .mz-input:focus, .log-search-input:focus, .log-select:focus {
+  border-color: var(--signal); box-shadow: var(--ring);
+}
+.field .label, .label { letter-spacing: .12em; color: var(--muted); }
+.hint { color: var(--signal); }
+
+/* ── Buttons ──────────────────────────────────────────────────────────────── */
+.btn {
+  border-radius: var(--r-sm); font-family: var(--display); font-weight: 600;
+  letter-spacing: .01em; border: 1px solid var(--border);
+  background: var(--surface-2); transition: transform .06s, filter .15s, border-color .15s, background .15s;
+}
+.btn:hover:not(:disabled) { border-color: var(--signal); background: var(--surface-3); }
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn.primary, .process-btn, .p0-btn {
+  background: linear-gradient(140deg, var(--accent), var(--accent-strong));
+  color: #2a1c00; border-color: transparent;
+  box-shadow: 0 4px 14px -6px rgba(255,154,31,.7), inset 0 1px 0 rgba(255,255,255,.3);
+}
+.btn.primary:hover:not(:disabled), .process-btn:hover:not(:disabled), .p0-btn:hover:not(:disabled) {
+  filter: brightness(1.06); border-color: transparent;
+}
+.btn.ghost.subtle { background: transparent; }
+.btn.ghost.subtle:hover:not(:disabled) { background: var(--surface-2); }
+
+/* ── Stat readouts — instrument gauges ────────────────────────────────────── */
+.stat-box {
+  background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--r-sm);
+  padding: 12px 8px 10px; position: relative; overflow: hidden;
+}
+.stat-box::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--muted-dim); opacity: .6;
+}
+.stat-box.green::before  { background: var(--green); }
+.stat-box.yellow::before { background: var(--yellow); }
+.stat-box.red::before    { background: var(--red); }
+.stat-box.purple::before { background: #b483ff; }
+.stat-box.muted-col::before { background: var(--skip-col); }
+.stat-value {
+  font-family: var(--mono); font-size: 26px; font-weight: 700;
+  font-feature-settings: "tnum" 1; letter-spacing: -.02em;
+}
+.stat-label { font-size: 9px; letter-spacing: .08em; color: var(--muted); }
+
+/* ── Progress ─────────────────────────────────────────────────────────────── */
+.progress-bar { height: 7px; background: var(--bg-2); box-shadow: inset 0 1px 2px rgba(0,0,0,.5); }
+.progress-fill { background: linear-gradient(90deg, var(--accent), var(--signal)); }
+#progressCount { color: var(--signal); font-feature-settings: "tnum" 1; }
+
+/* ── Tables (manual / logs / purge / tracker) ─────────────────────────────── */
+.tote-table-wrap, .logs-table-wrap, .purge-table-wrap, #tab-tracker .tr-tablewrap {
+  border: 1px solid var(--border); border-radius: var(--r); background: var(--bg-2);
+}
+.tote-table, .logs-table, .purge-table, #tab-tracker table.tr-table { font-family: var(--mono); }
+.tote-table thead th, .logs-table thead th, .purge-table thead tr:first-child th,
+#tab-tracker table.tr-table thead th {
+  background: linear-gradient(180deg, var(--surface-2), var(--surface)) !important;
+  color: var(--muted) !important; font-family: var(--display);
+  text-transform: uppercase; letter-spacing: .1em; font-size: 10px; font-weight: 600;
+  border-bottom: 1px solid var(--border) !important;
+}
+.tote-table tbody tr:hover, .logs-table tbody tr:hover,
+#tab-tracker table.tr-table tbody tr:hover { background: rgba(54,214,207,.05); }
+.td-tote, #tab-tracker td .sc { color: var(--text); }
+.td-zone { color: var(--signal); }
+#tab-tracker td .sc { font-feature-settings: "tnum" 1; }
+
+/* ── Pills / tags / badges ────────────────────────────────────────────────── */
+.tag, .pri-badge, .priority-badge, .pbadge-p0, .pbadge-p1, .pbadge-p2,
+.lbadge, .zone-badge, .lmode-badge, .intel-badge,
+#tab-tracker .tr-st, #tab-tracker .tr-pg {
+  border-radius: var(--r-pill); font-family: var(--display); font-weight: 700;
+  letter-spacing: .03em;
+}
+.tag-green  { background: rgba(70,217,138,.14);  color: var(--green);  border-color: rgba(70,217,138,.35); }
+.tag-yellow { background: rgba(243,195,77,.14);  color: var(--yellow); border-color: rgba(243,195,77,.35); }
+.tag-red    { background: rgba(255,93,93,.14);   color: var(--red);    border-color: rgba(255,93,93,.35); }
+.tag-blue   { background: rgba(90,169,255,.14);  color: var(--blue);   border-color: rgba(90,169,255,.35); }
+
+/* ── Priority lanes ───────────────────────────────────────────────────────── */
+.p0-lane { border-color: rgba(255,93,93,.45);  background: linear-gradient(180deg, rgba(255,93,93,.06), var(--surface)); }
+.p1-lane { border-color: rgba(243,195,77,.45); background: linear-gradient(180deg, rgba(243,195,77,.06), var(--surface)); }
+.p2-lane { border-color: rgba(70,217,138,.45); background: linear-gradient(180deg, rgba(70,217,138,.06), var(--surface)); }
+
+/* ── Status lamps ─────────────────────────────────────────────────────────── */
+.status-running { box-shadow: 0 0 10px rgba(70,217,138,.7); }
+.status-paused  { box-shadow: 0 0 10px rgba(243,195,77,.6); }
+.status-err     { box-shadow: 0 0 10px rgba(255,93,93,.7); }
+.status-fetch   { box-shadow: 0 0 10px rgba(90,169,255,.6); }
+
+/* ── Activity log console ─────────────────────────────────────────────────── */
+.log {
+  background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--r);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.5);
+}
+
+/* ── Toast ────────────────────────────────────────────────────────────────── */
+.toast {
+  border-radius: var(--r); box-shadow: var(--shadow-2);
+  border: 1px solid var(--border); background: var(--surface-2);
+  font-family: var(--sans);
+}
+.toast-ok   { border-left: 3px solid var(--green); }
+.toast-warn { border-left: 3px solid var(--yellow); }
+.toast-err  { border-left: 3px solid var(--red); }
+
+/* ── Tracker table header alignment + section subtitle ────────────────────── */
+#tab-tracker table.tr-table thead th { position: sticky; top: 0; }
+.purge-sub, .stats-meta { color: var(--muted); }
+
+/* ── Custom scrollbars — thin console rails ───────────────────────────────── */
+* { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: var(--r-pill); border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: var(--signal-dim); background-clip: padding-box; }
+
+/* ── A11y: focus + reduced motion ─────────────────────────────────────────── */
+:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Layout restructure — left vertical sidebar + content column
+   ════════════════════════════════════════════════════════════════════════════ */
+.shell { max-width: 1240px; }
+
+.layout { display: flex; gap: 18px; align-items: flex-start; }
+.content { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+
+/* Sidebar: stacks vertically, sticks while content scrolls */
+.tab-nav {
+  flex: 0 0 220px; flex-direction: column; gap: 4px;
+  position: sticky; top: 16px; align-self: flex-start; margin-bottom: 0;
+}
+.tab-btn { justify-content: flex-start; text-align: left; width: 100%; padding: 10px 12px; }
+/* active marker becomes a vertical bar on the right edge */
+.tab-btn.active { box-shadow: var(--shadow-1), inset 0 0 0 1px var(--border); }
+.tab-btn.active::after {
+  content: ""; left: auto; right: 8px; bottom: auto; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 18px; border-radius: 2px;
+}
+.tab-count { margin-left: auto; }
+
+/* Tote Puller group (collapsible) */
+.nav-group { display: flex; flex-direction: column; gap: 4px; }
+.nav-group-head {
+  display: flex; align-items: center; gap: 9px; width: 100%; padding: 10px 12px;
+  background: transparent; border: none; border-radius: 9px; cursor: pointer;
+  color: var(--muted); font-family: var(--display); font-weight: 600; font-size: 13px;
+}
+.nav-group-head:hover { color: var(--text); background: rgba(255,255,255,.03); }
+.nav-chev { margin-left: auto; font-size: 11px; transition: transform .15s; }
+.nav-group.collapsed .nav-chev { transform: rotate(-90deg); }
+.nav-group.collapsed .nav-sub { display: none; }
+.nav-sub {
+  display: flex; flex-direction: column; gap: 4px;
+  margin-left: 9px; padding-left: 13px; border-left: 1px solid var(--border);
+}
+.nav-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Host/Instance are now hidden — zone panels become single-column */
+#manualSingleZone { display: flex; flex-direction: column; gap: 10px; }
+#singleZonePanel  { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+
+/* Narrow screens: sidebar collapses to a horizontal strip on top */
+@media (max-width: 880px) {
+  .layout { flex-direction: column; }
+  .tab-nav { flex: 0 0 auto; flex-direction: row; flex-wrap: wrap; position: static; width: 100%; }
+  .nav-group { flex: 1 1 100%; }
+  .nav-sub { flex-direction: row; border-left: none; margin-left: 0; padding-left: 0; }
+  .tab-btn.active::after { right: auto; left: 50%; top: auto; bottom: 4px; transform: translateX(-50%); width: 18px; height: 2px; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Space optimisation — Manual + Auto config
+   ════════════════════════════════════════════════════════════════════════════ */
+/* Config row that reflows when a column (e.g. Zone under multi-zone) hides */
+.cfg-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.cfg-row > .cfg-col, .cfg-row > .field { flex: 1 1 150px; min-width: 0; margin-bottom: 0; }
+#manualSingleZone { display: flex; flex-direction: column; gap: 0; }
+
+/* Multi-zone toggle — slim strip instead of a broad bordered banner */
+.mz-section { padding: 0 !important; background: transparent !important; border: none !important; box-shadow: none !important; }
+.mz-header  { padding: 6px 0 !important; gap: 10px; }
+.mz-hint    { display: none !important; }   /* "Distribute totes across zones by %" — redundant */
+
+/* Grafana dumps side by side on a single line */
+.grafana-dumps { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.grafana-dump-row  { gap: 8px; padding: 8px 10px; }
+.grafana-dump-name { font-size: 12px; }
+.grafana-dump-last { font-size: 10px; }
+
+/* ASRS source — one line, no long hints */
+.asrs-source-row  { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.asrs-source-opts { display: flex; gap: 18px; flex-wrap: wrap; flex-direction: row; }
+.asrs-opt { display: flex; align-items: center; gap: 7px; }
+.asrs-opt-hint { display: none !important; }

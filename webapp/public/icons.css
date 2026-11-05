@@ -1,0 +1,117 @@
+/* GENERATED icon set (Lucide-style strokes) - used as CSS masks: <i class="ico" data-i="name"></i>. Do not hand-edit. */
+:root {
+  --ico-dashboard: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M3%203h7v9H3z%20M14%203h7v5h-7z%20M14%2012h7v9h-7z%20M3%2016h7v5H3z%27%2F%3E%3C%2Fsvg%3E");
+  --ico-chart: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M12%2020V10%20M18%2020V4%20M6%2020v-4%27%2F%3E%3C%2Fsvg%3E");
+  --ico-lock: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M5%2011h14v10H5z%20M8%2011V7a4%204%200%200%201%208%200v4%27%2F%3E%3C%2Fsvg%3E");
+  --ico-filter: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M3%204h18l-7%208v6l-4%202v-8z%27%2F%3E%3C%2Fsvg%3E");
+  --ico-search: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M11%204a7%207%200%201%200%200%2014%207%207%200%200%200%200-14z%20M21%2021l-4.3-4.3%27%2F%3E%3C%2Fsvg%3E");
+  --ico-grid: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M3%203h18v18H3z%20M3%209h18%20M3%2015h18%20M9%203v18%20M15%203v18%27%2F%3E%3C%2Fsvg%3E");
+  --ico-check: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M9%2011l3%203L22%204%20M21%2012v7a2%202%200%200%201-2%202H5a2%202%200%200%201-2-2V5a2%202%200%200%201%202-2h11%27%2F%3E%3C%2Fsvg%3E");
+  --ico-package: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M21%208l-9-5-9%205v8l9%205%209-5z%20M3%208l9%205%209-5%20M12%2013v8%27%2F%3E%3C%2Fsvg%3E");
+  --ico-hand: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M8%2013V5a2%202%200%201%201%204%200v6%20M12%2011V4a2%202%200%201%201%204%200v8%20M16%2012V7a2%202%200%201%201%204%200v8a8%208%200%200%201-8%208h-1a8%208%200%200%201-6-3l-3-5a2%202%200%200%201%203-2l2%202%27%2F%3E%3C%2Fsvg%3E");
+  --ico-zap: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M13%202L3%2014h9l-1%208%2010-12h-9z%27%2F%3E%3C%2Fsvg%3E");
+  --ico-file: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M14%202H6a2%202%200%200%200-2%202v16a2%202%200%200%200%202%202h12a2%202%200%200%200%202-2V8z%20M14%202v6h6%20M8%2013h8%20M8%2017h8%27%2F%3E%3C%2Fsvg%3E");
+  --ico-report: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M14%202H6a2%202%200%200%200-2%202v16a2%202%200%200%200%202%202h12a2%202%200%200%200%202-2V8z%20M14%202v6h6%20M8%2018v-3%20M12%2018v-6%20M16%2018v-4%27%2F%3E%3C%2Fsvg%3E");
+  --ico-shield: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M12%2022s8-4%208-10V5l-8-3-8%203v7c0%206%208%2010%208%2010z%27%2F%3E%3C%2Fsvg%3E");
+  --ico-compact: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M8%203v3a2%202%200%200%201-2%202H3%20M21%208h-3a2%202%200%200%201-2-2V3%20M3%2016h3a2%202%200%200%201%202%202v3%20M16%2021v-3a2%202%200%200%201%202-2h3%27%2F%3E%3C%2Fsvg%3E");
+  --ico-checkcircle: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M22%2011.1V12a10%2010%200%201%201-5.9-9.1%20M22%204L12%2014l-3-3%27%2F%3E%3C%2Fsvg%3E");
+  --ico-building: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M3%2021h18%20M5%2021V7l8-4v18%20M19%2021V11l-6-4%20M9%209v.01%20M9%2013v.01%20M9%2017v.01%27%2F%3E%3C%2Fsvg%3E");
+  --ico-outbound: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M7%2017L17%207%20M7%207h10v10%27%2F%3E%3C%2Fsvg%3E");
+  --ico-refresh: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M21%2012a9%209%200%201%201-3-6.7L21%208%20M21%203v5h-5%27%2F%3E%3C%2Fsvg%3E");
+  --ico-clock: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M12%202a10%2010%200%201%200%200%2020%2010%2010%200%200%200%200-20z%20M12%206v6l4%202%27%2F%3E%3C%2Fsvg%3E");
+  --ico-link: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M10%2013a5%205%200%200%200%207.5.5l3-3a5%205%200%200%200-7-7l-1.7%201.7%20M14%2011a5%205%200%200%200-7.5-.5l-3%203a5%205%200%200%200%207%207l1.7-1.7%27%2F%3E%3C%2Fsvg%3E");
+  --ico-trend: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M22%207l-8.5%208.5-5-5L2%2017%20M16%207h6v6%27%2F%3E%3C%2Fsvg%3E");
+  --ico-layers: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M12%202l10%205-10%205L2%207z%20M2%2017l10%205%2010-5%20M2%2012l10%205%2010-5%27%2F%3E%3C%2Fsvg%3E");
+  --ico-info: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M12%202a10%2010%200%201%200%200%2020%2010%2010%200%200%200%200-20z%20M12%2016v-4%20M12%208h.01%27%2F%3E%3C%2Fsvg%3E");
+  --ico-alert: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M10.29%203.86L1.82%2018a2%202%200%200%200%201.71%203h16.94a2%202%200%200%200%201.71-3L13.71%203.86a2%202%200%200%200-3.42%200z%20M12%209v4%20M12%2017h.01%27%2F%3E%3C%2Fsvg%3E");
+  --ico-user: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M20%2021v-2a4%204%200%200%200-4-4H8a4%204%200%200%200-4%204v2%20M12%2011a4%204%200%201%200%200-8%204%204%200%200%200%200%208z%27%2F%3E%3C%2Fsvg%3E");
+  --ico-sun: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M12%2017a5%205%200%201%200%200-10%205%205%200%200%200%200%2010z%20M12%201v2%20M12%2021v2%20M4.22%204.22l1.42%201.42%20M18.36%2018.36l1.42%201.42%20M1%2012h2%20M21%2012h2%20M4.22%2019.78l1.42-1.42%20M18.36%205.64l1.42-1.42%27%2F%3E%3C%2Fsvg%3E");
+  --ico-moon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M21%2012.79A9%209%200%201%201%2011.21%203%207%207%200%200%200%2021%2012.79z%27%2F%3E%3C%2Fsvg%3E");
+  --ico-bell: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M6%208a6%206%200%200%201%2012%200c0%207%203%209%203%209H3s3-2%203-9%20M10.3%2021a1.94%201.94%200%200%200%203.4%200%27%2F%3E%3C%2Fsvg%3E");
+}
+.ico { display: inline-block; width: 1.15em; height: 1.15em; flex-shrink: 0; vertical-align: -0.2em; background-color: currentColor; -webkit-mask: var(--ico) center / contain no-repeat; mask: var(--ico) center / contain no-repeat; }
+.ico[data-i="dashboard"] { --ico: var(--ico-dashboard); }
+.ico[data-i="chart"] { --ico: var(--ico-chart); }
+.ico[data-i="lock"] { --ico: var(--ico-lock); }
+.ico[data-i="filter"] { --ico: var(--ico-filter); }
+.ico[data-i="search"] { --ico: var(--ico-search); }
+.ico[data-i="grid"] { --ico: var(--ico-grid); }
+.ico[data-i="check"] { --ico: var(--ico-check); }
+.ico[data-i="package"] { --ico: var(--ico-package); }
+.ico[data-i="hand"] { --ico: var(--ico-hand); }
+.ico[data-i="zap"] { --ico: var(--ico-zap); }
+.ico[data-i="file"] { --ico: var(--ico-file); }
+.ico[data-i="report"] { --ico: var(--ico-report); }
+.ico[data-i="shield"] { --ico: var(--ico-shield); }
+.ico[data-i="compact"] { --ico: var(--ico-compact); }
+.ico[data-i="checkcircle"] { --ico: var(--ico-checkcircle); }
+.ico[data-i="building"] { --ico: var(--ico-building); }
+.ico[data-i="outbound"] { --ico: var(--ico-outbound); }
+.ico[data-i="refresh"] { --ico: var(--ico-refresh); }
+.ico[data-i="clock"] { --ico: var(--ico-clock); }
+.ico[data-i="link"] { --ico: var(--ico-link); }
+.ico[data-i="trend"] { --ico: var(--ico-trend); }
+.ico[data-i="layers"] { --ico: var(--ico-layers); }
+.ico[data-i="info"] { --ico: var(--ico-info); }
+.ico[data-i="alert"] { --ico: var(--ico-alert); }
+.ico[data-i="user"] { --ico: var(--ico-user); }
+.ico[data-i="sun"] { --ico: var(--ico-sun); }
+.ico[data-i="moon"] { --ico: var(--ico-moon); }
+.ico[data-i="bell"] { --ico: var(--ico-bell); }
+
+/* sidebar: emoji glyph hidden, icon drawn instead */
+.nav-icon { font-size: 0 !important; }
+.nav-icon::before { content: ""; display: block; width: 18px; height: 18px; margin: 0 auto; background-color: currentColor; -webkit-mask: var(--ico, var(--ico-dashboard)) center / contain no-repeat; mask: var(--ico, var(--ico-dashboard)) center / contain no-repeat; }
+.tab-btn[data-tab="dashboard"] .nav-icon { --ico: var(--ico-dashboard); }
+.tab-btn[data-tab="pickingMonitor"] .nav-icon { --ico: var(--ico-trend); }
+.tab-btn[data-tab="utilisation"] .nav-icon { --ico: var(--ico-chart); }
+.tab-btn[data-tab="lockedToteInfo"] .nav-icon { --ico: var(--ico-lock); }
+.tab-btn[data-tab="totePurge"] .nav-icon { --ico: var(--ico-filter); }
+.tab-btn[data-tab="tracker"] .nav-icon { --ico: var(--ico-search); }
+.tab-btn[data-tab="asrsLocations"] .nav-icon { --ico: var(--ico-grid); }
+.tab-btn[data-tab="cngValidator"] .nav-icon { --ico: var(--ico-check); }
+.tab-btn[data-tab="bulkInventoryCheck"] .nav-icon { --ico: var(--ico-package); }
+.tab-btn[data-tab="totePuller"] .nav-icon { --ico: var(--ico-hand); }
+.tab-btn[data-tab="autoPuller"] .nav-icon { --ico: var(--ico-zap); }
+.tab-btn[data-tab="pullerLogs"] .nav-icon { --ico: var(--ico-file); }
+.tab-btn[data-tab="onePagerReport"] .nav-icon { --ico: var(--ico-report); }
+.tab-btn[data-tab="asrsPerformance"] .nav-icon { --ico: var(--ico-trend); }
+.tab-btn[data-tab="lockedToteAnalytics"] .nav-icon { --ico: var(--ico-lock); }
+.tab-btn[data-tab="admin"] .nav-icon { --ico: var(--ico-shield); }
+.tab-btn[data-tab="alerts"] .nav-icon { --ico: var(--ico-bell); }
+
+.tab-btn[data-tab="users"] .nav-icon { --ico: var(--ico-user); }
+
+/* Added by hand (the generator is not in the repo): play, stop, skip, maximize, x, chevrons, settings */
+:root {
+  --ico-play: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27black%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpolygon%20points%3D%277%204%2020%2012%207%2020%207%204%27%2F%3E%3C%2Fsvg%3E");
+  --ico-stop: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27black%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Crect%20x%3D%276%27%20y%3D%276%27%20width%3D%2712%27%20height%3D%2712%27%20rx%3D%272%27%2F%3E%3C%2Fsvg%3E");
+  --ico-skip: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpolygon%20points%3D%275%204%2015%2012%205%2020%205%204%27%2F%3E%3Cline%20x1%3D%2719%27%20y1%3D%275%27%20x2%3D%2719%27%20y2%3D%2719%27%2F%3E%3C%2Fsvg%3E");
+  --ico-maximize: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M8%203H5a2%202%200%200%200-2%202v3m18%200V5a2%202%200%200%200-2-2h-3m0%2018h3a2%202%200%200%200%202-2v-3M3%2016v3a2%202%200%200%200%202%202h3%27%2F%3E%3C%2Fsvg%3E");
+  --ico-x: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M18%206%206%2018M6%206l12%2012%27%2F%3E%3C%2Fsvg%3E");
+  --ico-chevdown: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27m6%209%206%206%206-6%27%2F%3E%3C%2Fsvg%3E");
+  --ico-chevup: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27m18%2015-6-6-6%206%27%2F%3E%3C%2Fsvg%3E");
+  --ico-chevright: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27m9%2018%206-6-6-6%27%2F%3E%3C%2Fsvg%3E");
+  --ico-settings: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Ccircle%20cx%3D%2712%27%20cy%3D%2712%27%20r%3D%273%27%2F%3E%3Cpath%20d%3D%27M19.4%2015a1.65%201.65%200%200%200%20.33%201.82l.06.06a2%202%200%201%201-2.83%202.83l-.06-.06a1.65%201.65%200%200%200-1.82-.33%201.65%201.65%200%200%200-1%201.51V21a2%202%200%201%201-4%200v-.09a1.65%201.65%200%200%200-1-1.51%201.65%201.65%200%200%200-1.82.33l-.06.06a2%202%200%201%201-2.83-2.83l.06-.06a1.65%201.65%200%200%200%20.33-1.82%201.65%201.65%200%200%200-1.51-1H3a2%202%200%201%201%200-4h.09a1.65%201.65%200%200%200%201.51-1%201.65%201.65%200%200%200-.33-1.82l-.06-.06a2%202%200%201%201%202.83-2.83l.06.06a1.65%201.65%200%200%200%201.82.33h0a1.65%201.65%200%200%200%201-1.51V3a2%202%200%201%201%204%200v.09a1.65%201.65%200%200%200%201%201.51h0a1.65%201.65%200%200%200%201.82-.33l.06-.06a2%202%200%201%201%202.83%202.83l-.06.06a1.65%201.65%200%200%200-.33%201.82v0a1.65%201.65%200%200%200%201.51%201H21a2%202%200%201%201%200%204h-.09a1.65%201.65%200%200%200-1.51%201z%27%2F%3E%3C%2Fsvg%3E");
+}
+.ico[data-i="play"] { --ico: var(--ico-play); }
+.ico[data-i="stop"] { --ico: var(--ico-stop); }
+.ico[data-i="skip"] { --ico: var(--ico-skip); }
+.ico[data-i="maximize"] { --ico: var(--ico-maximize); }
+.ico[data-i="x"] { --ico: var(--ico-x); }
+.ico[data-i="chevdown"] { --ico: var(--ico-chevdown); }
+.ico[data-i="chevup"] { --ico: var(--ico-chevup); }
+.ico[data-i="chevright"] { --ico: var(--ico-chevright); }
+.ico[data-i="settings"] { --ico: var(--ico-settings); }
+
+/* Added by hand (generator not in the repo): download, copy */
+:root {
+  --ico-download: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M21%2015v4a2%202%200%200%201-2%202H5a2%202%200%200%201-2-2v-4M7%2010l5%205%205-5M12%2015V3%27%2F%3E%3C%2Fsvg%3E");
+  --ico-copy: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Crect%20x%3D%279%27%20y%3D%279%27%20width%3D%2713%27%20height%3D%2713%27%20rx%3D%272%27%2F%3E%3Cpath%20d%3D%27M5%2015H4a2%202%200%200%201-2-2V4a2%202%200%200%201%202-2h9a2%202%200%200%201%202%202v1%27%2F%3E%3C%2Fsvg%3E");
+}
+.ico[data-i="download"] { --ico: var(--ico-download); }
+.ico[data-i="copy"] { --ico: var(--ico-copy); }
+
+/* Added by hand (generator not in the repo): send */
+:root { --ico-send: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27m22%202-7%2020-4-9-9-4%2020-7z%27%2F%3E%3Cpath%20d%3D%27M22%202%2011%2013%27%2F%3E%3C%2Fsvg%3E"); }
+.ico[data-i="send"] { --ico: var(--ico-send); }

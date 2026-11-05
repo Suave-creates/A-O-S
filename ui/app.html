@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ASO Test</title>
+  <link rel="stylesheet" href="app.css" />
+  <link rel="stylesheet" href="app.theme.css" />
+</head>
+<body>
+  <div class="shell">
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-mark">
+          <img src="../icons/icon48.png" alt="ASRS" style="width:100%;height:100%;object-fit:contain;border-radius:6px;" />
+        </div>
+        <div class="brand-text">
+          <h1>ASO TEST</h1>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="version-badge v3" style="background:#ff5d5d;color:#1a0000;border-color:#ff5d5d;font-weight:800;">TEST BUILD</div>
+        <div class="version-badge v3">v1.0</div>
+        <div class="grafana-pill" id="grafanaStatusPill"><span class="dot" id="grafanaDot"></span><span id="grafanaLabel">Grafana</span></div>
+        <div class="auth-pill" id="authStatus">
+          <span class="dot" id="authDot"></span>
+          <span id="authLabel">checking…</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="layout">
+    <nav class="tab-nav" id="tabNav">
+      <div class="nav-group" id="navTotePuller">
+        <button type="button" class="nav-group-head" id="totePullerToggle" aria-expanded="true">
+          <span class="tab-icon">🧰</span><span class="nav-label">Tote Puller</span><span class="nav-chev" id="totePullerChev">▾</span>
+        </button>
+        <div class="nav-sub" id="totePullerSub">
+          <button class="tab-btn active" data-tab="manual"><span class="tab-icon">✋</span><span class="nav-label">Manual</span></button>
+          <button class="tab-btn" data-tab="auto"><span class="tab-icon">⚡</span><span class="nav-label">Auto</span><span class="tab-badge" id="autoBadge" style="display:none">●</span></button>
+          <button class="tab-btn" data-tab="logs"><span class="tab-icon">📋</span><span class="nav-label">Logs</span><span class="tab-count" id="logsCount">0</span></button>
+        </div>
+      </div>
+      <button class="tab-btn" data-tab="purge"><span class="tab-icon">⛏</span><span class="nav-label">Tote Purge</span></button>
+      <button class="tab-btn" data-tab="tracker"><span class="tab-icon">🔎</span><span class="nav-label">Outside Tote Analysis</span></button>
+      <button class="tab-btn" data-tab="utilisation"><span class="tab-icon">📦</span><span class="nav-label">Tote Utilisation</span></button>
+      <button class="tab-btn" data-tab="cc"><span class="tab-icon">🧮</span><span class="nav-label">Cycle Count</span></button>
+      <button class="tab-btn" data-tab="cng"><span class="tab-icon">🧾</span><span class="nav-label">CNG Inv Validator</span></button>
+      <button class="tab-btn" data-tab="rca"><span class="tab-icon">🩺</span><span class="nav-label">Supervisor RCA</span></button>
+      <button class="tab-btn" data-tab="report"><span class="tab-icon">📄</span><span class="nav-label">ASRS Daily Report</span></button>
+    </nav>
+    <div class="content">
+
+    <!-- TAB 1: MANUAL -->
+    <div class="tab-panel active" id="tab-manual">
+      <section class="card">
+        <input id="host" type="hidden" value="https://192.168.24.230" />
+        <input id="instanceCode" type="hidden" value="LK-069" />
+        <div id="manualZonePanel"></div>
+        <label class="field">
+          <span class="label">Totes <span class="hint" id="toteCount">0 queued</span></span>
+          <textarea id="totes" rows="6" placeholder="TL0000002607&#10;TL0000002608&#10;TL0000002609"></textarea>
+        </label>
+        <div class="cfg-row">
+          <div id="manualSingleZone" class="cfg-col">
+            <label class="field"><span class="label">Zone (station)</span><input id="zone" type="text" inputmode="numeric" placeholder="e.g. 5" /></label>
+          </div>
+          <label class="field cfg-col"><span class="label">Interval (sec)</span><input id="interval" type="number" min="1" value="5" /></label>
+          <label class="field cfg-col"><span class="label">Retry Delay (sec)</span><input id="retryDelay" type="number" min="1" value="5" /></label>
+        </div>
+      </section>
+
+      <div class="action-row">
+        <button id="startBtn"    class="btn primary">▶ Start</button>
+        <button id="stopBtn"     class="btn ghost"   disabled>■ Stop</button>
+        <button id="pauseBtn"    class="btn ghost"   disabled>⏸ Pause</button>
+        <button id="resumeBtn"   class="btn primary" disabled style="display:none">▶ Resume</button>
+        <button id="skipBtn"     class="btn skip"    disabled>⏭ Skip Tote</button>
+        <button id="clearLogBtn" class="btn ghost subtle">Clear Log</button>
+      </div>
+
+      <section class="progress-card">
+        <div class="progress-head">
+          <span id="progressLabel">Idle</span>
+          <span id="progressCount">0 / 0</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </section>
+
+      <!-- Manual Pull Safety Limiter — live rolling-window counter -->
+      <section class="pull-limit-card" id="pullLimitCard">
+        <div class="pull-limit-head">
+          <span class="pull-limit-title">Manual Pull Limit</span>
+          <span class="pull-limit-count"><strong id="pullLimitCount">0</strong> / <span id="pullLimitMax">100</span></span>
+        </div>
+        <div class="pull-limit-bar"><div class="pull-limit-fill" id="pullLimitFill"></div></div>
+        <div class="pull-limit-meta">
+          <span>Window: <strong>6 Minutes</strong></span>
+          <span>Remaining: <strong id="pullLimitRemaining">100</strong></span>
+        </div>
+      </section>
+
+      <section class="stats-card">
+        <div class="stats-header">
+          <span class="stats-title">24-Hour Tote Summary</span>
+          <div class="stats-actions">
+            <button id="exportCsvBtn"        class="btn ghost subtle small-btn">⬇ CSV</button>
+            <button id="exportJsonBtn"       class="btn ghost subtle small-btn">⬇ JSON</button>
+            <button id="clearDetailedLogBtn" class="btn ghost subtle small-btn danger-btn">✕ Clear</button>
+          </div>
+        </div>
+        <div class="stats-row five">
+          <div class="stat-box">           <span class="stat-value" id="statTotal">0</span>  <span class="stat-label">Total</span></div>
+          <div class="stat-box green">     <span class="stat-value" id="statCalled">0</span>  <span class="stat-label">Called</span></div>
+          <div class="stat-box yellow">    <span class="stat-value" id="statAlready">0</span> <span class="stat-label">Already Queued</span></div>
+          <div class="stat-box red">       <span class="stat-value" id="statUnavail">0</span> <span class="stat-label">Not Available</span></div>
+          <div class="stat-box muted-col"> <span class="stat-value" id="statSkipped">0</span> <span class="stat-label">Skipped</span></div>
+        </div>
+        <div class="tote-table-wrap">
+          <table class="tote-table">
+            <thead><tr><th>Tote</th><th>Zone</th><th>Status</th><th>Time</th></tr></thead>
+            <tbody id="toteTableBody"></tbody>
+          </table>
+          <p class="table-empty" id="tableEmpty">No totes processed yet.</p>
+        </div>
+      </section>
+
+      <div class="log-header">
+        <span class="log-title">Activity Log</span>
+        <div class="log-legend">
+          <span class="ll-item op-ok">● OK</span>
+          <span class="ll-item op-warn">● Notice</span>
+          <span class="ll-item op-err">● N/A</span>
+          <span class="ll-item net-err">● Network Error</span>
+        </div>
+      </div>
+      <section class="log" id="log" aria-live="polite"></section>
+    </div>
+
+    <!-- TAB 2: AUTO MODE -->
+    <div class="tab-panel" id="tab-auto">
+
+      <!-- Config card (status bar folded into header) -->
+      <section class="card">
+        <div class="cfg-title-row">
+          <div class="card-title">Configuration</div>
+          <div class="auto-status-inline">
+            <span class="status-dot status-idle" id="autoStatusDot"></span>
+            <span class="status-label" id="autoStatusLabel">Idle</span>
+            <span class="status-sep">·</span>
+            <span class="status-meta" id="autoZoneDisplay">—</span>
+            <span class="status-sep">·</span>
+            <span class="status-meta" id="autoBatchDisplay">—</span>
+            <span class="status-sep">·</span>
+            <span class="status-meta" id="autoIntervalDisplay">—</span>
+            <span class="status-sep">·</span>
+            <span class="status-meta">Next batch: <strong id="nextBatchIn">—</strong></span>
+            <div class="auth-pill" style="margin-left:8px">
+              <span class="dot" id="autoAuthDot"></span>
+              <span id="autoAuthLabel">—</span>
+            </div>
+          </div>
+        </div>
+        <!-- Google Sheets Integration -->
+        <div class="sheet-config-row">
+          <label class="field" style="flex:1">
+            <span class="label">Apps Script URL <span class="hint" id="fetchStatusBadge">not configured</span></span>
+            <input id="autoSheetUrl" type="text" placeholder="https://script.google.com/macros/s/…/exec" />
+          </label>
+          <button id="sheetConnectBtn" class="btn ghost subtle sheet-connect-btn" style="align-self:flex-end;margin-bottom:0">Connect</button>
+        </div>
+        <div class="fetch-status-row" id="fetchStatusRow" style="display:none">
+          <span class="fetch-meta">Last fetch: <span id="lastFetchTime">never</span></span>
+          <span class="fetch-meta">New totes: <span id="lastFetchNew">—</span></span>
+          <span class="fetch-meta">Errors: <span id="fetchErrorCount">0</span></span>
+        </div>
+        <input id="autoFetchInterval" type="hidden" value="2" />
+        <!-- Quadron connection -->
+        <input id="autoHost" type="hidden" value="https://192.168.24.230" />
+
+        <!-- Grafana Integration -->
+        <div class="grafana-section">
+          <div class="grafana-section-header">
+            <div class="grafana-section-title">
+              <span class="grafana-icon">◈</span>
+              Grafana Integration
+            </div>
+            <div class="grafana-status-row">
+              <span class="grafana-status-dot" id="grafanaConnDot"></span>
+              <span class="grafana-status-label" id="grafanaConnLabel">Checking…</span>
+            </div>
+          </div>
+
+          <div class="grafana-body">
+            <input id="grafanaUrl" type="hidden" value="https://192.168.24.230" />
+
+            <!-- Dump status rows with individual intervals -->
+            <div class="grafana-dumps">
+              <div class="grafana-dump-row">
+                <span class="grafana-dump-icon">🔒</span>
+                <span class="grafana-dump-name">Locked Tote Dump</span>
+                <span class="grafana-dump-last" id="grafanaLockedLast">Never fetched</span>
+                <div class="grafana-interval-wrap">
+                  <input id="grafanaLockedInterval" type="number" min="1" max="120" value="30" class="grafana-interval-input" />
+                  <span class="grafana-interval-unit">min</span>
+                </div>
+              </div>
+              <div class="grafana-dump-row">
+                <span class="grafana-dump-icon">⚡</span>
+                <span class="grafana-dump-name">Supervisor Dump</span>
+                <span class="grafana-dump-last" id="grafanaSuperLast">Never fetched</span>
+                <div class="grafana-interval-wrap">
+                  <input id="grafanaSuperInterval" type="number" min="1" max="240" value="60" class="grafana-interval-input" />
+                  <span class="grafana-interval-unit">min</span>
+                </div>
+              </div>
+            </div>
+            <input type="hidden" id="grafanaSuperEnabled" value="true" />
+
+            <!-- ASRS Source + Auto-fetch + Fetch Now in one compact row -->
+            <div class="asrs-source-row">
+              <span class="asrs-source-label">Priority Source</span>
+              <div class="asrs-source-opts">
+                <label class="asrs-opt">
+                  <input type="radio" name="asrsSource" id="asrsSourceApi" value="quadron_api" />
+                  <span class="asrs-opt-name">Quadron</span>
+                  <span class="asrs-opt-hint">real-time inventory — no sheet paste needed</span>
+                </label>
+                <label class="asrs-opt">
+                  <input type="radio" name="asrsSource" id="asrsSourceSheet" value="sheet_dump" />
+                  <span class="asrs-opt-name">Sheet Dump</span>
+                  <span class="asrs-opt-hint">manually pasted ASRS export in Google Sheets</span>
+                </label>
+              </div>
+              <div class="asrs-right-actions">
+                <label class="grafana-auto-toggle">
+                  <input type="checkbox" id="grafanaAutoEnabled" />
+                  <span class="grafana-toggle-label">Auto-fetch</span>
+                </label>
+                <button id="grafanaFetchNowBtn" class="btn ghost subtle">↻ Fetch Now</button>
+              </div>
+            </div>
+
+            <div class="grafana-result-bar" id="grafanaResultBar" style="display:none">
+              <span id="grafanaResultText"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Multi-zone panel (mounted by MultiZone component) -->
+        <div id="autoZonePanel"></div>
+        <input id="autoInstanceCode" type="hidden" value="LK-069" />
+
+        <!-- Zone + all batch params: 3 per row, 2 rows -->
+        <div id="singleZonePanel" class="grid-3">
+          <label class="field"><span class="label">Zone (Station)</span><input id="autoZone" type="text" inputmode="numeric" placeholder="e.g. 5" /></label>
+          <label class="field"><span class="label">Batch Size</span><input id="autoBatchSize" type="number" min="1" max="50" value="5" /><span class="field-hint">how many totes to call at once</span></label>
+          <label class="field"><span class="label">Batch Interval</span><input id="autoBatchInterval" type="number" min="0.1" step="0.1" value="1" /><span class="field-hint">pause after each round (min)</span></label>
+          <label class="field"><span class="label">Tote Interval</span><input id="autoCallInterval" type="number" min="1" value="5" /><span class="field-hint">seconds between each tote call</span></label>
+          <label class="field"><span class="label">Cooldown</span><input id="autoCooldown" type="number" min="0" step="0.5" value="1" /><span class="field-hint">don't re-call same tote for X min (0 = off)</span></label>
+          <label class="field"><span class="label">Retry Delay (sec)</span><input id="autoRetryDelay" type="number" min="1" value="5" /></label>
+          <label class="field">
+            <span class="label">Heartbeat Interval</span>
+            <select id="autoHeartbeatMinutes">
+              <option value="1">1 Minute</option>
+              <option value="10" selected>10 Minutes (Default)</option>
+              <option value="30">30 Minutes</option>
+            </select>
+            <span class="field-hint">operator confirmation prompt while running</span>
+          </label>
+        </div>
+      </section>
+
+        <!-- Queue Processing — collapsed toggle -->
+        <div class="manual-override-toggle" id="queueProcessingToggle">
+          <span class="mo-icon">⚙</span> Queue Processing
+          <span class="mo-chevron" id="queueProcessingChevron">▸</span>
+        </div>
+        <div id="queueProcessingBody" style="display:none">
+          <div class="process-panel">
+            <div class="process-panel-left">
+              <div class="intel-meta">Last fetch: <span id="lastProcessedTime">never</span> &nbsp;|&nbsp; Time taken: <span id="lastElapsed">—</span>s</div>
+              <div class="intel-meta" id="procStatsGrafana">Locked: <span id="procLockedCount">—</span> &nbsp;|&nbsp; SD: <span id="procSDCount">—</span> &nbsp;|&nbsp; P0: <span id="procP0Count">—</span> &nbsp;|&nbsp; P1: <span id="procP1Count">—</span> &nbsp;|&nbsp; P2: <span id="procP2Count">—</span></div>
+              <div class="intel-meta" id="procStatsSheet" style="display:none">ASRS rows: <span id="procAsrsRows">—</span> &nbsp;|&nbsp; PIDs: <span id="procPidCount">—</span> &nbsp;|&nbsp; Queue: <span id="procQueueCount">—</span></div>
+            </div>
+            <button id="processQueueBtn" class="btn process-btn">⚙ Process Queue</button>
+          </div>
+        </div>
+
+      <!-- Manual override — collapsed by default -->
+      <div class="manual-override-toggle" id="manualOverrideToggle">
+        <span class="mo-icon">⚙</span> Manual Priority Override
+        <span class="mo-chevron" id="manualOverrideChevron">▸</span>
+      </div>
+      <section class="priority-lanes" id="manualOverrideLanes" style="display:none">
+        <div class="priority-lane p0-lane">
+          <div class="lane-header">
+            <span class="priority-badge p0">P0</span>
+            <span class="lane-title">Critical — Orders Blocked</span>
+            <button id="clearP0Btn" class="btn ghost subtle xs-btn">✕ Clear</button>
+          </div>
+          <textarea id="totesP0" class="lane-textarea" rows="4" placeholder="TL0000000000&#10;TL0000000001"></textarea>
+          <button id="addP0Btn" class="btn p0-btn">Add P0 Totes</button>
+        </div>
+        <div class="priority-lane p1-lane">
+          <div class="lane-header">
+            <span class="priority-badge p1">P1</span>
+            <span class="lane-title">High Priority</span>
+            <button id="clearP1Btn" class="btn ghost subtle xs-btn">✕ Clear</button>
+          </div>
+          <textarea id="totesP1" class="lane-textarea" rows="4" placeholder="TL0000000000&#10;TL0000000001"></textarea>
+          <button id="addP1Btn" class="btn p1-btn">Add P1 Totes</button>
+        </div>
+        <div class="priority-lane p2-lane">
+          <div class="lane-header">
+            <span class="priority-badge p2">P2</span>
+            <span class="lane-title">Standard Priority</span>
+            <button id="clearP2Btn" class="btn ghost subtle xs-btn">✕ Clear</button>
+          </div>
+          <textarea id="totesP2" class="lane-textarea" rows="4" placeholder="TL0000000000&#10;TL0000000001"></textarea>
+          <button id="addP2Btn" class="btn p2-btn">Add P2 Totes</button>
+        </div>
+      </section>
+
+      <!-- Controls -->
+      <div class="action-row">
+        <button id="autoStartBtn"  class="btn primary">▶ Start Auto</button>
+        <button id="autoPauseBtn"  class="btn ghost"   disabled>⏸ Pause</button>
+        <button id="autoResumeBtn" class="btn ghost"   disabled>▶ Resume</button>
+        <button id="autoStopBtn"   class="btn ghost"   disabled>■ Stop</button>
+        <button id="autoSkipBtn"   class="btn skip"    disabled>⏭ Skip Tote</button>
+        <button id="clearAllQueueBtn" class="btn ghost subtle">🗑 Clear Queue</button>
+      </div>
+
+      <!-- Queue panel -->
+      <section class="stats-card">
+        <div class="stats-header">
+          <span class="stats-title">Queue</span>
+          <span class="stats-meta">Starvation prevention active — P2 totes guaranteed every 10 batches</span>
+          <button id="exportQueueCsvBtn" class="btn ghost subtle small-btn" title="Download current queue as CSV">⬇ Export CSV</button>
+        </div>
+        <div class="stats-row six">
+          <div class="stat-box purple">  <span class="stat-value" id="queueSDCount">0</span>   <span class="stat-label">⚡ SD Priority</span></div>
+          <div class="stat-box red">     <span class="stat-value" id="queueP0Count">0</span>   <span class="stat-label">P0 Critical</span></div>
+          <div class="stat-box yellow">  <span class="stat-value" id="queueP1Count">0</span>   <span class="stat-label">P1 High</span></div>
+          <div class="stat-box green">   <span class="stat-value" id="queueP2Count">0</span>   <span class="stat-label">P2 Standard</span></div>
+          <div class="stat-box">         <span class="stat-value" id="queueTotalCount">0</span><span class="stat-label">Total</span></div>
+          <div class="stat-box">         <span class="stat-value" id="autoStatBatches">0</span><span class="stat-label">Batches Run</span></div>
+        </div>
+
+        <div class="tote-table-wrap">
+          <table class="tote-table">
+            <thead><tr><th>Tote</th><th>Priority</th><th>Source</th><th>Added</th><th></th></tr></thead>
+            <tbody id="autoQueueBody"></tbody>
+          </table>
+          <p class="table-empty" id="autoQueueEmpty">Queue is empty. Add totes above.</p>
+        </div>
+      </section>
+
+      <!-- Session stats -->
+      <section class="stats-card">
+        <div class="stats-header"><span class="stats-title">Session Statistics</span></div>
+        <div class="stats-row five">
+          <div class="stat-box green">     <span class="stat-value" id="autoStatCalled">0</span>  <span class="stat-label">Called</span></div>
+          <div class="stat-box yellow">    <span class="stat-value" id="autoStatAlready">0</span> <span class="stat-label">Already Queued</span></div>
+          <div class="stat-box red">       <span class="stat-value" id="autoStatUnavail">0</span> <span class="stat-label">Not Available</span></div>
+          <div class="stat-box muted-col"> <span class="stat-value" id="autoStatSkipped">0</span> <span class="stat-label">Skipped/Ignored</span></div>
+          <div class="stat-box">           <span class="stat-value" id="autoStatBatches2" style="display:none">0</span> <span class="stat-label"></span></div>
+        </div>
+      </section>
+
+      <!-- Live log -->
+      <div class="log-header">
+        <span class="log-title">Auto Mode Log</span>
+        <div class="log-legend">
+          <span class="ll-item op-ok">● Called</span>
+          <span class="ll-item op-warn">● Notice</span>
+          <span class="ll-item op-err">● N/A</span>
+          <span class="ll-item op-ignore">● Cooldown</span>
+          <span class="ll-item net-err">● Network Error</span>
+        </div>
+      </div>
+      <section class="log" id="autoLog" aria-live="polite"></section>
+
+    </div><!-- /tab-auto -->
+
+
+    <!-- TAB 3: LOGS -->
+    <!-- One Click Purge tab (content rendered by components/purge.js) -->
+    <div class="tab-panel" id="tab-purge"></div>
+
+    <!-- Tracker tab (content rendered by components/tracker.js) -->
+    <div class="tab-panel" id="tab-tracker"></div>
+
+    <!-- Tote Utilisation tab (content rendered by components/utilisation.js) -->
+    <div class="tab-panel" id="tab-utilisation"></div>
+
+    <!-- Cycle Count Reconciliation tab (content rendered by components/cc-dashboard.js) -->
+    <div class="tab-panel" id="tab-cc"></div>
+
+    <!-- CNG Inv Validator tab (content rendered by components/cng-validator.js) -->
+    <div class="tab-panel" id="tab-cng"></div>
+
+    <!-- TAB: SUPERVISOR DASHBOARD RCA -->
+    <div class="tab-panel" id="tab-rca"></div>
+
+    <div class="tab-panel" id="tab-report"></div>
+
+    <div class="tab-panel" id="tab-logs">
+
+      <!-- Stats bar -->
+      <div class="logs-stats-bar">
+        <div class="log-stat"><span class="log-stat-val" id="logStatTotal">0</span><span class="log-stat-lbl">Total Entries</span></div>
+        <div class="log-stat green"><span class="log-stat-val" id="logStatOk">0</span><span class="log-stat-lbl">Called OK</span></div>
+        <div class="log-stat yellow"><span class="log-stat-val" id="logStatWarn">0</span><span class="log-stat-lbl">Notices</span></div>
+        <div class="log-stat red"><span class="log-stat-val" id="logStatErr">0</span><span class="log-stat-lbl">N/A</span></div>
+        <div class="log-stat orange"><span class="log-stat-val" id="logStatNet">0</span><span class="log-stat-lbl">Network Errors</span></div>
+        <div class="log-stat blue"><span class="log-stat-val" id="logStatIgnored">0</span><span class="log-stat-lbl">Ignored</span></div>
+        <div class="log-stat muted-col"><span class="log-stat-val" id="logStatSkipped">0</span><span class="log-stat-lbl">Skipped</span></div>
+      </div>
+
+      <!-- Search + filter bar -->
+      <div class="logs-toolbar">
+        <div class="logs-search-wrap">
+          <input id="logSearch" type="text" placeholder="Search tote ID, message, zone…" class="log-search-input" />
+          <button id="logSearchClear" class="log-search-clear" title="Clear search">✕</button>
+        </div>
+        <div class="logs-filters">
+          <button class="log-filter-btn active" data-filter="all">All</button>
+          <button class="log-filter-btn" data-filter="op_ok">✅ Called</button>
+          <button class="log-filter-btn" data-filter="op_warn">⚠ Notice</button>
+          <button class="log-filter-btn" data-filter="op_err">❌ N/A</button>
+          <button class="log-filter-btn" data-filter="net_err">🔴 Network</button>
+          <button class="log-filter-btn" data-filter="ignored">🕐 Ignored</button>
+          <button class="log-filter-btn" data-filter="skipped">⏭ Skipped</button>
+          <button class="log-filter-btn" data-filter="info">ℹ System</button>
+        </div>
+        <div class="logs-actions">
+          <select id="logModeFilter" class="log-select" title="Filter by mode">
+            <option value="">All modes</option>
+            <option value="manual">Manual</option>
+            <option value="auto">Auto</option>
+          </select>
+          <select id="logPriorityFilter" class="log-select" title="Filter by priority">
+            <option value="">All priorities</option>
+            <option value="P0">P0 Critical</option>
+            <option value="P1">P1 High</option>
+            <option value="P2">P2 Standard</option>
+          </select>
+          <button id="logRefreshBtn" class="btn ghost subtle small-btn">↻ Refresh</button>
+          <button id="logExportCsvBtn" class="btn ghost subtle small-btn">⬇ CSV</button>
+          <button id="logExportJsonBtn" class="btn ghost subtle small-btn">⬇ JSON</button>
+          <button id="logClearBtn" class="btn ghost subtle small-btn danger-btn">🗑 Clear All</button>
+        </div>
+      </div>
+
+      <!-- Log table -->
+      <div class="logs-table-wrap" id="logsTableWrap">
+        <table class="logs-table">
+          <thead>
+            <tr>
+              <th style="width:90px">Time</th>
+              <th style="width:60px">Level</th>
+              <th style="width:130px">Tote ID</th>
+              <th style="width:65px">Zone</th>
+              <th style="width:55px">Priority</th>
+              <th style="width:60px">Mode</th>
+              <th>Message</th>
+            </tr>
+          </thead>
+          <tbody id="logsTableBody"></tbody>
+        </table>
+        <div class="logs-empty" id="logsEmpty">
+          <div class="logs-empty-icon">📋</div>
+          <p>No log entries yet.</p>
+          <p class="logs-empty-sub">Entries appear here as totes are called in Manual or Auto mode.</p>
+        </div>
+        <div class="logs-loading" id="logsLoading" style="display:none">Loading…</div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="logs-footer">
+        <span id="logsShowing">Showing 0 entries</span>
+        <div class="logs-page-btns">
+          <button id="logsPrevBtn" class="btn ghost subtle small-btn" disabled>← Prev</button>
+          <span id="logsPageLabel">Page 1</span>
+          <button id="logsNextBtn" class="btn ghost subtle small-btn" disabled>Next →</button>
+        </div>
+        <span id="logsTotalCount"></span>
+      </div>
+
+    </div>
+
+    </div><!-- /.content -->
+    </div><!-- /.layout -->
+  </div>
+  <div id="toastContainer"></div>
+
+  <!-- Start Mode confirmation — reused by Manual Start and Auto Start -->
+  <div class="safety-modal-overlay" id="startConfirmOverlay" style="display:none">
+    <div class="safety-modal" role="dialog" aria-modal="true" aria-labelledby="startConfirmTitle">
+      <div class="safety-modal-icon">▶</div>
+      <h2 class="safety-modal-title" id="startConfirmTitle">Start?</h2>
+      <p class="safety-modal-msg" id="startConfirmMsg"></p>
+      <div class="safety-modal-note" id="startConfirmNote" style="display:none"></div>
+      <div class="safety-modal-actions">
+        <button id="startConfirmCancelBtn" class="btn ghost">Cancel</button>
+        <button id="startConfirmOkBtn" class="btn primary">Start</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auto Mode Heartbeat — operator confirmation modal -->
+  <div class="safety-modal-overlay" id="heartbeatModalOverlay" style="display:none">
+    <div class="safety-modal" role="dialog" aria-modal="true" aria-labelledby="heartbeatModalTitle">
+      <div class="safety-modal-icon">⏱</div>
+      <h2 class="safety-modal-title" id="heartbeatModalTitle">Operator Confirmation Required</h2>
+      <p class="safety-modal-msg" id="heartbeatModalMsg">Auto Mode has been running for <strong id="heartbeatModalInterval">10 minutes</strong>.<br />Please confirm you are still monitoring the system.</p>
+      <div class="safety-modal-countdown">Auto will stop in <strong id="heartbeatCountdown">60</strong> seconds…</div>
+      <div class="safety-modal-actions">
+        <button id="heartbeatStopBtn" class="btn ghost">Stop Auto Mode</button>
+        <button id="heartbeatContinueBtn" class="btn primary">Continue Auto Mode</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manual Pull Safety Limiter — limit-reached modal -->
+  <div class="safety-modal-overlay" id="pullLimitModalOverlay" style="display:none">
+    <div class="safety-modal warn" role="dialog" aria-modal="true" aria-labelledby="pullLimitModalTitle">
+      <div class="safety-modal-icon warn">⚠</div>
+      <h2 class="safety-modal-title" id="pullLimitModalTitle">Manual Pull Limit Reached</h2>
+      <p class="safety-modal-msg">You have already performed 100 tote pulls within the last 6 minutes.<br />Please wait until the limit decreases before continuing.</p>
+      <div class="safety-modal-countdown" id="pullLimitModalWait">Next pull available in ~<strong id="pullLimitWaitSec">—</strong>s</div>
+      <div class="safety-modal-actions">
+        <button id="pullLimitDismissBtn" class="btn ghost">Got it, I'll wait</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../shared/constants.js"></script>
+  <script src="../shared/utils.js"></script>
+  <script src="../shared/cc-classify.js"></script>
+  <script src="components/multizone.js"></script>
+  <script src="components/auto.js"></script>
+  <script src="components/logs.js"></script>
+  <script src="components/purge.js"></script>
+  <script src="components/tracker.js"></script>
+  <script src="components/utilisation.js"></script>
+  <script src="components/cc-modules.js"></script>
+  <script src="components/cc-dashboard.js"></script>
+  <script src="components/cng-validator.js"></script>
+  <script src="components/rca.js"></script>
+  <script src="lib/html2canvas.min.js"></script>
+  <script src="components/report.js"></script>
+  <script src="components/safety-limiters.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

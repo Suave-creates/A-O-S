@@ -1,0 +1,1657 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ASRS Intelligence &amp; Automation | AOS</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/brand/aos-favicon-32.png" />
+<link rel="icon" type="image/png" sizes="64x64" href="/brand/aos-favicon-64.png" />
+<link rel="apple-touch-icon" href="/brand/aos-mark-192.png" />
+<meta name="theme-color" content="#ffffff" />
+<link rel="preload" href="/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/fonts/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+<script>try { var t = localStorage.getItem("aso_theme"); if (t !== "dark") document.documentElement.setAttribute("data-theme", "light"); } catch (e) {}</script>
+<link rel="stylesheet" href="/app.css" />
+<link rel="stylesheet" href="/icons.css" />
+<link rel="stylesheet" href="/theme.css" />
+<link rel="stylesheet" href="/aos.css" />
+<!-- ASRS Locations' 3D view only - vendored (not CDN, this app has no other
+     external runtime dependency and no build step), mapped so
+     asrsLocations3d.js's `import ... from "three"` resolves without a
+     bundler. Must appear before that module script loads. -->
+<script type="importmap">
+{ "imports": { "three": "/js/vendor/three.module.js" } }
+</script>
+</head>
+<body>
+
+<div id="loginView" class="hidden">
+  <svg class="lx-circuit" id="lxCircuit" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+  <div class="lx-card" id="lxCard">
+    <section class="lx-brand" aria-hidden="true">
+      <img class="lx-mark" src="/brand/aos-mark-192.png" alt="" width="192" height="192" />
+    </section>
+    <form class="lx-form" id="loginForm" novalidate>
+      <div class="lx-title">
+        <h1 class="lx-name">AOS<span class="brand-dot">.</span></h1>
+        <p class="lx-tag"><b>ASRS</b> Intelligence &amp; Automation</p>
+      </div>
+      <label class="sr-only" for="employeeId">Employee ID</label>
+      <div class="lx-field">
+        <i class="ico" data-i="user" aria-hidden="true"></i>
+        <input id="employeeId" type="text" autocomplete="username" placeholder="Employee ID" spellcheck="false" />
+      </div>
+      <label class="lx-label" for="password">Password</label>
+      <div class="lx-field">
+        <i class="ico" data-i="lock" aria-hidden="true"></i>
+        <input id="password" type="password" autocomplete="current-password" placeholder="Password" />
+        <button type="button" class="lx-eye" id="lxPwToggle" aria-label="Show password" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path class="lx-eye-slash" d="M4 4l16 16"/></svg>
+        </button>
+      </div>
+      <button class="lx-go" id="loginBtn" type="submit"><span>Log in</span></button>
+      <div class="lx-error hidden" id="loginError" role="alert"></div>
+    </form>
+  </div>
+</div>
+
+<!-- Sign-in transition (js/core/loginFx.js): logo tile -> zoom through light -> welcome. -->
+<div class="lx-fx" id="loginFx" hidden aria-hidden="true">
+  <div class="lx-fx-streaks"></div>
+  <div class="lx-fx-tile"><img src="/brand/aos-mark-192.png" alt="" width="192" height="192" /></div>
+  <div class="lx-fx-flash"></div>
+  <div class="lx-welcome"><div class="lx-welcome-dots"></div><p>Welcome back,</p><strong id="lxWelcomeName"></strong></div>
+</div>
+
+<div id="appView" class="hidden">
+  <a class="skip-link" href="#mainContent">Skip to content</a>
+  <div id="shellLive" class="sr-only" role="status" aria-live="polite"></div>
+  <button type="button" id="sidebarMobileToggle" class="sidebar-mobile-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">&#9776;</button>
+  <div id="sidebarOverlay" class="sidebar-overlay hidden"></div>
+
+  <div class="app-shell" id="appShell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <img class="sidebar-brand-mark" src="/brand/aos-mark-96.png" alt="AOS" width="44" height="44" />
+        <div class="sidebar-brand-text">
+          <div class="sidebar-brand-name">AOS<span class="brand-dot" aria-hidden="true">.</span></div>
+          <div class="sidebar-brand-sub"><b>ASRS</b> Intelligence &amp; Automation</div>
+        </div>
+        <button type="button" class="sidebar-collapse-btn" id="sidebarCollapseBtn" aria-label="Collapse sidebar" aria-expanded="true" aria-controls="sidebar"><i class="ico" data-i="chevright" aria-hidden="true"></i></button>
+      </div>
+
+      <nav class="sidebar-nav" id="sidebarNav" aria-label="Main navigation">
+        <button class="nav-item tab-btn" data-tab="dashboard" title="Dashboard - live site overview"><span class="nav-icon" aria-hidden="true">&#9679;</span><span class="nav-label">Dashboard</span></button>
+
+        <div class="nav-section" data-sec="monitor">
+          <div class="nav-section-label">Monitor</div>
+        <button class="nav-item tab-btn" data-tab="utilisation" title="Tote Utilisation - how full the totes are"><span class="nav-icon" aria-hidden="true">&#9679;</span><span class="nav-label">Tote Utilisation</span></button>
+        <button class="nav-item tab-btn" data-tab="lockedToteInfo" title="Locked Totes - totes locked in the ASRS, by priority"><span class="nav-icon" aria-hidden="true">&#9679;</span><span class="nav-label">Locked Totes</span></button>
+        <button class="nav-item tab-btn" data-tab="tracker" title="Outside Totes - totes outside the ASRS and for how long"><span class="nav-icon" aria-hidden="true">&#9679;</span><span class="nav-label">Outside Totes</span></button>
+        <button class="nav-item tab-btn" data-tab="asrsLocations" title="Location Audit - ASRS aisles and locations"><span class="nav-icon" aria-hidden="true">&#9679;</span><span class="nav-label">Location Audit</span></button>
+        <button class="nav-item tab-btn" data-tab="aisleOccupancy" title="Aisle Occupancy - how full each aisle is, by level, side and depth"><span class="nav-icon" aria-hidden="true">&#9679;</span><span class="nav-label">Aisle Occupancy</span></button>
+        </div>
+
+        <div class="nav-section" data-sec="operate">
+          <div class="nav-section-label">Operate</div>
+        <button class="nav-item tab-btn" data-tab="totePuller" title="Manual Puller - call a list of totes"><span class="nav-icon" aria-hidden="true">&#9679;</span><span class="nav-label">Manual Puller</span></button>
+        <button class="nav-item tab-btn" data-tab="autoPuller" title="Auto Puller - priority-based automatic pulls"><span class="nav-icon" aria-hidden="true">&#9679;</span><span class="nav-label">Auto Puller</span></button>
+        <button class="nav-item tab-btn" data-tab="totePurge" title="Tote Purge - totes that can be purged"><span class="nav-icon" aria-hidden="true">&#9679;</span><span class="nav-label">Tote Purge</span></button>
+        <button class="nav-item tab-btn" data-tab="pullerLogs" title="Pull Logs - manual and auto pull sessions"><span class="nav-icon" aria-hidden="true">&#9679;</span><span class="nav-label">Pull Logs</span></button>
+        </div>
+
+        <div class="nav-section" data-sec="inventory">
+          <div class="nav-section-label">Inventory</div>
+        <button class="nav-item tab-btn" data-tab="bulkInventoryCheck" title="Bulk Tote Inv Check - check many totes at once"><span class="nav-icon" aria-hidden="true">&#9679;</span><span class="nav-label">Bulk Tote Inv Check</span></button>
+        <button class="nav-item tab-btn" data-tab="cngValidator" title="CNG Validator - three-way partition reconciliation"><span class="nav-icon" aria-hidden="true">&#9679;</span><span class="nav-label">CNG Validator</span></button>
+        </div>
+
+        <div class="nav-section" data-sec="insights">
+          <div class="nav-section-label">Insights</div>
+        <button class="nav-item tab-btn" data-tab="onePagerReport" title="One Pager Report - daily summary, any date"><span class="nav-icon" aria-hidden="true">&#9679;</span><span class="nav-label">One Pager Report</span></button>
+        <button class="nav-item tab-btn" data-tab="asrsPerformance" title="ASRS Performance - the One Pager day by day, MTD and averages"><span class="nav-icon" aria-hidden="true">&#9679;</span><span class="nav-label">ASRS Performance</span></button>
+        <button class="nav-item tab-btn" data-tab="lockedToteAnalytics" title="Locked Tote Analytics - reported, ghost and repeat cycle counts"><span class="nav-icon" aria-hidden="true">&#9679;</span><span class="nav-label">Locked Tote Analytics</span></button>
+        <button class="nav-item tab-btn" data-tab="alerts" id="alertsNavBtn" title="Alerts - global and normal alerts"><span class="nav-icon" aria-hidden="true">&#9679;</span><span class="nav-label">Alerts</span><span class="nav-badge" id="alertsNavBadge" hidden>0</span></button>
+        </div>
+
+        <div class="nav-section" data-sec="testing">
+          <div class="nav-section-label">Testing</div>
+        <button class="nav-item tab-btn" data-tab="pickingMonitor" title="Picking Monitor - orders picked today, hour by hour"><span class="nav-icon" aria-hidden="true">&#9679;</span><span class="nav-label">Picking Monitor</span></button>
+        </div>
+
+        <div class="nav-section" data-sec="admin">
+          <div class="nav-section-label">Admin</div>
+        <button class="nav-item tab-btn" data-tab="users" id="usersTabBtn" title="Users - accounts and panel access" style="display:none"><span class="nav-icon" aria-hidden="true">&#9679;</span><span class="nav-label">Users</span></button>
+        <button class="nav-item tab-btn" data-tab="admin" id="adminTabBtn" title="Active Queries - running jobs"><span class="nav-icon" aria-hidden="true">&#9679;</span><span class="nav-label">Active Queries</span></button>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-profile-menu hidden" id="sidebarProfileMenu">
+          <button class="link" id="logoutBtn">Log out</button>
+        </div>
+        <button type="button" class="sidebar-profile" id="sidebarProfileBtn" aria-haspopup="true" aria-expanded="false" aria-controls="sidebarProfileMenu">
+          <span class="sidebar-avatar" id="sidebarAvatar">?</span>
+          <span class="sidebar-profile-text">
+            <span class="sidebar-profile-name" id="sidebarProfileName"></span>
+            <span class="sidebar-profile-role" id="sidebarProfileRole"></span>
+          </span>
+          <span class="sidebar-profile-chevron" aria-hidden="true"><i class="ico" data-i="chevup"></i></span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="app-content">
+      <div class="content-topbar">
+        <div class="topbar-crumb" id="topbarCrumb" aria-hidden="true"><span class="topbar-crumb-section" id="topbarSection"></span><span class="topbar-crumb-sep">/</span><span class="topbar-crumb-page" id="topbarPage"></span></div>
+        <span id="localDevBadge" class="local-dev-badge hidden" title="STRICT LOCAL DEVELOPMENT AUTH MODE - this session bypasses MySQL-backed authentication and query persistence. Never present in production.">LOCAL DEV</span>
+        <div id="connectionStatusBar" class="conn-bar"></div>
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to light mode" title="Switch light / dark mode"><i class="ico" data-i="sun"></i></button>
+      </div>
+
+      <main id="mainContent" tabindex="-1">
+    <section id="tab-dashboard" class="tab-panel">
+      <header class="screen-head">
+        <div class="screen-head-id">
+          <span class="h-ico"><i class="ico" data-i="dashboard"></i></span>
+          <div><h3>ASRS Control Center <span class="dash-facility" id="dashFacilityId">NXS1</span></h3><p class="screen-sub">Today's site day since 06:00 IST - click any tile for the hour-by-hour detail</p></div>
+        </div>
+        <div class="screen-head-actions">
+          <span class="live-pill live-idle" id="dashLivePill" title="Connection to the server"><span class="live-dot"></span><span id="dashLiveLabel">LIVE</span></span>
+          <span class="dash-clock" id="dashClock">--:--:--</span>
+          <button type="button" class="dash-ar-btn" id="dashArBtn" aria-expanded="false" aria-controls="dashArPanel"><i class="ico" data-i="clock"></i>Auto refresh</button>
+          <button class="primary" id="dashRefreshBtn"><i class="ico" data-i="refresh"></i>Refresh</button>
+        </div>
+      </header>
+
+      <details class="info-note">
+        <summary><i class="ico" data-i="info"></i>How this screen works</summary>
+        <p>Today's site day (06:00 IST onward). Each tile is fetched on its Auto refresh interval (the Auto refresh
+           button above - the same for everyone, set by an admin), when you open this tab, and when you press Refresh. Click any tile
+           to see the hour-by-hour detail behind it. The One Pager Report shows the same numbers for any past date.
+           Opening this tab never starts the Auto/Manual Tote Puller or a Tote Purge.
+           A tile shows &ldquo;No data yet&rdquo; when its source hasn't produced anything &mdash; never a made-up value.</p>
+      </details>
+
+      <div class="ut-status dash-status"><span class="note" id="dashLastRefreshed">Loading&hellip;</span><span class="note bg-note" id="dashArSummary"></span></div>
+
+      <div class="panel dash-ar hidden" id="dashArPanel">
+        <div class="dash-ar-head"><span>Tile auto refresh <span class="note">minutes &middot; 0 = off &middot; the same for everyone</span></span><button type="button" class="dash-ar-reset" id="dashArReset">Reset</button></div>
+        <div class="dash-ar-rows" id="dashArRows"></div>
+        <p class="note dash-ar-foot"><span id="dashArNote"></span> The server refreshes each source once per interval while anyone has the Dashboard in view, however many people watch. Tiles that share one source refresh together; Auto Puller is live while a session runs.</p>
+      </div>
+
+      <div class="panel dash-section">
+        <div class="ut-card-head"><h3>Today so far</h3><span class="note">since 06:00 IST &middot; click a tile for the hour-by-hour detail</span></div>
+        <div class="tile-grid" id="dashTiles"></div>
+      </div>
+
+      <div class="panel dash-section">
+        <div class="ut-card-head"><h3>Capacity</h3><span class="note">click for the full breakdown</span></div>
+        <div class="group-grid" id="dashGroups"></div>
+      </div>
+    </section>
+
+    <section id="tab-pickingMonitor" class="tab-panel hidden">
+      <div class="control-header">
+        <div class="control-header-id">
+          <span class="control-header-title"><span class="h-ico"><i class="ico" data-i="trend"></i></span>Picking Monitor</span>
+          <span class="control-header-facility">NXS1</span>
+        </div>
+        <div class="control-header-status">
+          <span class="bg-note" title="Nothing refreshes on its own: this screen fetches fresh data when you open it and when you press Refresh."><i class="ico" data-i="info"></i>Refreshes on open or Refresh</span>
+          <span class="control-header-clock" id="pmClock">--:--:--</span>
+          <span class="live-pill live-idle" id="pmLivePill" title="Live updates from the server"><span class="live-dot"></span><span id="pmLiveLabel">LIVE</span></span>
+          <button class="primary" id="pmRefreshBtn"><i class="ico" data-i="refresh"></i>Refresh</button>
+        </div>
+      </div>
+
+      <details class="info-note">
+        <summary><i class="ico" data-i="info"></i>How this screen works</summary>
+        <p>Live view of items picked at each picking station (GS...) for today's site day (06:00 IST onward), pushed by the server as numbers change. Click any tile to see the hour-by-hour detail behind it, or a station to see its whole day. Filter by order type and priority exactly as on the WES dashboard. A station is <b>Idle</b> when it picked items earlier today but none in the window, and <b>Slow</b> when it is below half of the median active station (needs at least four active stations). There is no target yet, so nothing is judged against an invented goal. The <b>Order flow</b> tiles are the WES dashboard's order panel for the same filters; counts marked with a window follow the Window filter, "right now" counts describe the pipeline at this moment. A tile shows &ldquo;Unavailable&rdquo; when its source hasn't produced anything &mdash; never a made-up value.
+           <span class="last-updated" id="pmLastRefreshed">Waiting for the first reading&hellip;</span></p>
+      </details>
+
+      <div class="panel pm-filters">
+        <label>Order type
+          <select id="pmType">
+            <option value="ALL">All</option><option value="NORMAL">Normal (FR1)</option><option value="JIT">JIT</option><option value="BULK">Bulk</option>
+            <option value="FR0">FR0</option><option value="FR1">FR1</option><option value="FR2">FR2</option><option value="ADHOC">Adhoc</option>
+          </select>
+        </label>
+        <label>Order priority
+          <select id="pmPriority">
+            <option value="ALL">All</option><option value="0">0</option><option value="1">1</option><option value="2">2</option>
+            <option value="10">10</option><option value="11">11</option><option value="100">100</option>
+          </select>
+        </label>
+        <label>Station type
+          <select id="pmStationType"><option value="ALL">All</option></select>
+        </label>
+        <label>Station priority
+          <select id="pmStationPriority">
+            <option value="ALL">All</option><option value="PRIORITY">Priority</option><option value="NONPRIORITY">Non-priority</option><option value="CHECK">Supervisor to check</option>
+          </select>
+        </label>
+        <label>Window
+          <select id="pmWindow">
+            <option value="15">Last 15 min</option><option value="30">Last 30 min</option><option value="60" selected>Last hour</option>
+            <option value="120">Last 2 hours</option><option value="240">Last 4 hours</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="dd-banner warn hidden" id="pmBanner"></div>
+
+      <div class="panel dd-empty-state" id="pmEmpty">
+        <i class="ico" data-i="trend"></i>
+        <h4>Waiting for the first reading</h4>
+        <p>The server reads today's picking counts and pushes them here as soon as they arrive. The first read of a new filter takes a little longer.</p>
+      </div>
+
+      <div id="pmBody" class="hidden">
+        <div class="tile-section">
+          <h3 class="tile-h">Today so far <span class="tile-h-sub">since 06:00 IST &middot; click a tile for the hour-by-hour detail</span></h3>
+          <div class="tile-grid" id="pmTiles"></div>
+        </div>
+
+        <div class="tile-section">
+          <h3 class="tile-h">Order flow <span class="tile-h-sub">WES order panel &middot; same filters</span></h3>
+          <div class="tile-grid pm-flow-grid" id="pmFlow"></div>
+        </div>
+
+        <div class="tile-section">
+          <h3 class="tile-h">Stations <span class="tile-h-sub">ranked by the window &middot; click a station for its whole day</span></h3>
+          <div class="tile-grid pm-station-grid" id="pmStations"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-utilisation" class="tab-panel hidden">
+      <header class="screen-head">
+        <div class="screen-head-id">
+          <span class="h-ico"><i class="ico" data-i="chart"></i></span>
+          <div><h3>Tote Utilisation</h3><p class="screen-sub">How full the large and small totes are</p></div>
+        </div>
+        <div class="screen-head-actions">
+          <button class="ghost" id="utCapsBtn" aria-expanded="false" aria-controls="utCaps"><i class="ico" data-i="settings"></i>Capacities</button>
+          <button class="ghost" id="utilCsvBtn" disabled><i class="ico" data-i="download"></i>Export CSV</button>
+          <button class="primary" id="runUtilisationBtn"><i class="ico" data-i="play"></i>Run now</button>
+        </div>
+      </header>
+      <details class="info-note">
+        <summary><i class="ico" data-i="info"></i>What this screen does</summary>
+        <p>Reads the canonical NEXS ASRS Tote Dump snapshot (already fetched — no second ASRS read). Counts only real TL/TS storage totes; a tote holding both Frame and Lens is excluded from the fill calculation as a data-integrity exception, not split or estimated. Opens on the latest run, whoever ran it. Read-only — never calls a tote.</p>
+      </details>
+
+      <div class="panel ut-caps" id="utCaps" hidden>
+        <div class="ut-caps-head"><h3>Capacity per tote</h3><span class="note">Used by the next run. Saved on this browser.</span></div>
+        <div class="grid4">
+          <div><label for="capLargeLens">Large / Lens</label><input type="number" min="1" id="capLargeLens" placeholder="300" /></div>
+          <div><label for="capLargeFrame">Large / Frame</label><input type="number" min="1" id="capLargeFrame" placeholder="200" /></div>
+          <div><label for="capSmallLens">Small / Lens</label><input type="number" min="1" id="capSmallLens" placeholder="200" /></div>
+          <div><label for="capSmallFrame">Small / Frame</label><input type="number" min="1" id="capSmallFrame" placeholder="100" /></div>
+        </div>
+        <p><button class="primary" id="utCapsRunBtn"><i class="ico" data-i="play"></i>Run with these</button><button class="ghost" id="utilResetCapsBtn"><i class="ico" data-i="refresh"></i>Reset to defaults</button></p>
+      </div>
+
+      <div class="ut-status" id="utStatus" hidden><span class="status-pill" id="utilStatusPill"></span><span id="utilStatusLine"></span></div>
+      <div class="error hidden" id="utilisationError"></div>
+
+      <div class="panel dd-empty-state" id="utEmpty">
+        <i class="ico" data-i="chart"></i><h4 id="utEmptyTitle">Loading the latest run&hellip;</h4><p id="utEmptyText">The newest utilisation run appears here automatically.</p>
+      </div>
+
+      <div id="utBody" hidden>
+        <div class="ut-viewing" id="utViewing"></div>
+        <div class="ut-kpis" id="utKpis"></div>
+        <div class="ut-grid">
+          <div class="ut-sizes" id="utSizes"></div>
+          <div class="panel ut-bands-card">
+            <div class="ut-card-head"><h3>How full are the totes?</h3><span class="note" id="utBandsNote"></span></div>
+            <div class="ut-bands" id="utBands"></div>
+            <div class="ut-legend" id="utLegend"></div>
+          </div>
+          <div class="panel ut-low-card">
+            <div class="ut-card-head"><h3>Nearly empty totes</h3><span class="note">holding 1&ndash;5 items</span></div>
+            <div class="ut-low" id="utLow"></div>
+          </div>
+        </div>
+        <div class="ut-mixed-warn" id="utMixedWarn" role="alert" hidden></div>
+
+        <div class="panel" id="utilDetailPanel">
+          <div class="ut-card-head"><h3>Every tote</h3><span class="note" id="utilDetailNote"></span></div>
+          <div class="ut-detail-tools">
+            <input type="search" id="utDetailSearch" placeholder="Find a tote ID" aria-label="Find a tote ID" autocomplete="off" />
+            <div class="al-seg" id="utSizeSeg" role="group" aria-label="Tote size"><button type="button" data-v="ALL" class="active">All sizes</button><button type="button" data-v="Large">Large</button><button type="button" data-v="Small">Small</button></div>
+            <div class="al-seg" id="utProdSeg" role="group" aria-label="Product"><button type="button" data-v="ALL" class="active">All</button><button type="button" data-v="Lens">Lens</button><button type="button" data-v="Frame">Frame</button></div>
+            <div class="al-seg" id="utBandSeg" role="group" aria-label="Fill"><button type="button" data-v="ALL" class="active">Any fill</button><button type="button" data-v="low">Under 30%</button><button type="button" data-v="mid">30&ndash;50%</button><button type="button" data-v="good">50&ndash;90%</button><button type="button" data-v="full">90%+</button></div>
+          </div>
+          <div class="ut-table-wrap">
+            <table>
+              <thead><tr><th>Tote ID</th><th>Size</th><th>Product</th><th class="num sortable" id="utilSortQty" aria-sort="none">Items <i class="ico" data-i="chevdown"></i></th><th class="num">Capacity</th><th class="sortable" id="utilSortUtil" aria-sort="ascending">Fill <i class="ico" data-i="chevup"></i></th></tr></thead>
+              <tbody id="utilDetailBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="ut-card-head">
+          <h3>Recent runs</h3>
+          <div class="ut-hist-tools"><button class="ghost" id="utilHistoryRefreshBtn"><i class="ico" data-i="refresh"></i>Refresh</button><button class="primary" id="utilCompareBtn" disabled>Compare 2 runs</button></div>
+        </div>
+        <div class="ut-trend" id="utTrend"></div>
+        <div class="error hidden" id="utilHistoryError"></div>
+        <div class="util-history-scroll">
+          <table>
+            <thead><tr><th class="ut-cb-col"><span class="sr-only">Compare</span></th><th>Run</th><th>When</th><th>By</th><th class="num">Totes</th><th>Fill</th><th class="num">Mixed</th><th></th></tr></thead>
+            <tbody id="utilHistoryBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel" id="utilComparePanel" hidden>
+        <div class="ut-card-head"><h3>Comparison</h3><button class="ghost" id="utCompareClose">Close</button></div>
+        <div class="ut-compare" id="utCompare"></div>
+      </div>
+    </section>
+
+    <section id="tab-lockedToteInfo" class="tab-panel hidden">
+      <header class="screen-head">
+        <div class="screen-head-id">
+          <span class="h-ico"><i class="ico" data-i="lock"></i></span>
+          <div><h3>Locked Totes</h3><p class="screen-sub">What is locked in the ASRS right now - by priority, age and aisle</p></div>
+        </div>
+        <div class="screen-head-actions">
+          <span id="ltiFreshness" class="fresh-badge"></span>
+          <button class="ghost" id="ltiDlCsvBtn"><i class="ico" data-i="download"></i>CSV</button>
+          <button class="ghost" id="ltiDlJsonBtn"><i class="ico" data-i="download"></i>JSON</button>
+          <button class="primary" id="ltiRefreshBtn"><i class="ico" data-i="refresh"></i>Refresh</button>
+        </div>
+      </header>
+
+      <details class="info-note">
+        <summary><i class="ico" data-i="info"></i>What this screen does</summary>
+        <p>Read-only. Fetches the Locked Tote Dump (Grafana), Supervisor Dump and Quadron Inventory, classifies every locked
+           tote as SD / P0 / P1 / P2 and tracks how long each has been locked. It never pulls a tote, creates a pull session
+           or enters the Quadron pull queue - it only answers "what is the current ASRS situation?" so you can decide what to do.
+           <b>Quadron decides what is locked:</b> a tote from the Locked Tote Dump is counted only when Quadron's inventory holds it with stock; the others are listed apart under <b>Not in Quadron</b> and never counted. If Quadron cannot be read, the refresh keeps the last snapshot.
+           <b>SD</b> = on the Supervisor dump; <b>P0</b> = the only tote in the ASRS holding one of its PIDs, <b>P1</b> = 2-3 totes, <b>P2</b> = 4 or more.
+           Click a tile, a grid cell or an aisle to filter the list.</p>
+      </details>
+
+      <div class="ut-status lti-status"><span class="note" id="ltiRefreshedAt"></span><span class="note lti-facts-line" id="ltiFactsLine"></span></div>
+      <p class="note hidden" id="ltiEmpty">No snapshot yet. Select Refresh to fetch the locked totes.</p>
+      <p class="note" id="ltiDegradedNote"></p>
+      <div class="error hidden" id="ltiError"></div>
+
+      <div id="ltiOverviewPanel" style="display:none;">
+        <div class="ot-kpis lti-kpis" id="ltiKpis"></div>
+        <div class="lti-two">
+          <div class="panel">
+            <div class="ut-card-head"><h3>How long they have been locked</h3><span class="note">totes by priority and age - click a cell to list them</span></div>
+            <div class="lti-tablewrap"><table class="lti-grid" id="ltiAgeGrid"></table></div>
+          </div>
+          <div class="panel">
+            <div class="ut-card-head"><h3>Where they are</h3><span class="note">by aisle - click one to list it</span></div>
+            <div class="lti-tablewrap"><table class="lti-grid" id="ltiAisleGrid"></table></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="ltiDumpPanel" style="display:none;">
+        <div class="ut-card-head">
+          <h3>Every locked tote <span class="note" id="ltiDumpNote"></span></h3>
+        </div>
+        <div class="ut-detail-tools lti-tools">
+          <input type="search" id="ltiSearch" placeholder="Find a tote, location, tracker, shuttle or PID" aria-label="Search" autocomplete="off" />
+          <div class="al-seg" id="ltiPrioritySeg" role="group" aria-label="Priority">
+            <button type="button" data-v="" class="active">All</button><button type="button" data-v="SD">SD</button><button type="button" data-v="P0">P0</button><button type="button" data-v="P1">P1</button><button type="button" data-v="P2">P2</button>
+          </div>
+          <div class="al-seg" id="ltiAgeSeg" role="group" aria-label="Locked for"></div>
+          <span class="lti-chip hidden" id="ltiAisleChip"></span>
+        </div>
+        <div class="locked-tote-dump-scroll lti-tablewrap"><table id="ltiDumpTable" class="lti-dump"></table></div>
+      </div>
+
+      <details class="panel lti-history" id="ltiHistoryPanel" style="display:none;">
+        <summary><span class="lti-history-title">Past snapshots</span><span class="note">every refresh, newest first - open one to look back</span><button class="ghost" id="ltiHistoryRefreshBtn" type="button"><i class="ico" data-i="refresh"></i>Reload</button></summary>
+        <div class="lti-tablewrap"><table id="ltiHistoryTable" class="lti-dump"></table></div>
+      </details>
+    </section>
+
+    <section id="tab-totePurge" class="tab-panel hidden">
+      <header class="screen-head">
+        <div class="screen-head-id">
+          <span class="h-ico"><i class="ico" data-i="filter"></i></span>
+          <div><h3>Tote Purge</h3><p class="screen-sub">Totes that can be purged - analysis only, nothing is called</p></div>
+        </div>
+        <div class="screen-head-actions">
+          <span class="tp-safe"><i class="ico" data-i="shield"></i>Analysis only &middot; no totes are called</span>
+          <button class="ghost" id="tpResetFiltersBtn"><i class="ico" data-i="refresh"></i>Reset filters</button>
+          <button class="primary" id="tpGenerateBtn"><i class="ico" data-i="play"></i>Generate candidates</button>
+        </div>
+      </header>
+      <details class="info-note">
+        <summary><i class="ico" data-i="info"></i>What this screen does</summary>
+        <p>Builds purge candidates from the canonical NEXS ASRS Tote Dump (already fetched - no second Google Sheet read), checks blocked inventory per SKU via the NexS Blocked Inventory capability, then validates each candidate against the existing Quadron Inventory capability. This tab only ever produces a report for the operations team to review - it never calls a tote, never touches Auto/Manual, and never dispatches PULL_QUADRON_TOTE. The operations team decides which tote to call separately, outside this tool.</p>
+      </details>
+      <div class="ops-grid">
+      <div class="ops-main">
+      <div class="panel tp-filters">
+        <div class="ut-card-head"><h3>Filters</h3><span class="note">a tote and its PIDs must pass all of these</span></div>
+        <div class="at-settings tp-settings">
+          <div class="at-tile call">
+            <div class="at-tile-head"><span>Tote barcodes</span><span class="tp-op">&le;</span></div>
+            <div class="at-tile-val"><input type="number" min="1" id="tpToteBarcode" placeholder="7" aria-label="Total tote barcode, at most" /></div>
+            <small>total barcodes in the tote</small>
+          </div>
+          <div class="at-tile call">
+            <div class="at-tile-head"><span>Tote partitions</span><span class="tp-op">&le;</span></div>
+            <div class="at-tile-val"><input type="number" min="1" id="tpPartition" placeholder="1" aria-label="Tote partitions, at most" /></div>
+            <small>partitions in the tote</small>
+          </div>
+          <div class="at-tile call">
+            <div class="at-tile-head"><span>PID inventory</span><span class="tp-op">&gt;</span></div>
+            <div class="at-tile-val"><input type="number" min="0" id="tpPidInv" placeholder="100" aria-label="Total PID inventory, more than" /></div>
+            <small>units of the PID in ASRS</small>
+          </div>
+          <div class="at-tile call">
+            <div class="at-tile-head"><span>PID totes</span><span class="tp-op">&ge;</span></div>
+            <div class="at-tile-val"><input type="number" min="1" id="tpPidTote" placeholder="3" aria-label="Totes holding the PID, at least" /></div>
+            <small>totes holding the PID</small>
+          </div>
+          <div class="at-tile call">
+            <div class="at-tile-head"><span>Blocked</span></div>
+            <div class="at-tile-val"><select id="tpBlockedMode" aria-label="Blocked inventory">
+              <option value="both">Both</option>
+              <option value="blocked">Blocked only</option>
+              <option value="non_blocked">Non-Blocked (0)</option>
+            </select></div>
+            <small>blocked inventory per SKU</small>
+          </div>
+          <div class="at-tile queue">
+            <div class="at-tile-head"><span>NexS facility</span></div>
+            <div class="at-tile-val"><input type="text" id="tpFacility" placeholder="NXS1" aria-label="NexS facility (blocked API header)" /></div>
+            <small>sent with the blocked-inventory check</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="ut-status tp-status"><span id="tpStatusPill" class="status-pill"></span><span class="note" id="tpStatusLine"></span></div>
+      <div class="error hidden" id="tpError"></div>
+      </div>
+
+      <div class="ops-side">
+        <div class="ops-idle">
+          <span class="h-ico"><i class="ico" data-i="filter"></i></span>
+          <h4>Nothing generated yet</h4>
+          <p>Set the filters above and press Generate candidates. The candidates, totals and mismatches appear here. Nothing is called.</p>
+        </div>
+      <div class="tp-results" id="tpResultsPanel" style="display:none;">
+        <div class="tp-kpis">
+          <div class="ot-kpi" style="--c:var(--text)"><span>Purge totes</span><b id="tpStTotes">0</b></div>
+          <div class="ot-kpi" style="--c:var(--text)"><span>Inventory</span><b id="tpStInv">0</b></div>
+          <div class="ot-kpi" style="--c:var(--text)"><span>Unique PIDs</span><b id="tpStPids">0</b></div>
+          <div class="ot-kpi" style="--c:var(--ok)"><span>Validated</span><b id="tpStValid">0</b></div>
+          <div class="ot-kpi" style="--c:var(--warn)"><span>Blocked</span><b id="tpStBlocked">0</b></div>
+          <div class="ot-kpi" style="--c:var(--ok)"><span>Non-blocked</span><b id="tpStNonBlocked">0</b></div>
+          <div class="ot-kpi" style="--c:var(--danger)"><span>Mismatches</span><b id="tpStMismatch">0</b></div>
+          <div class="ot-kpi" style="--c:var(--muted)"><span>PIDs API-skipped</span><b id="tpStApiFail">0</b></div>
+        </div>
+        <div class="alert-box info" id="tpIntegrity"></div>
+
+        <div class="panel">
+          <div class="ut-card-head">
+            <h3>Tote Purge Dump <span class="note" id="tpDumpNote"></span></h3>
+            <div class="tp-dl">
+              <button class="ghost" id="tpDlCsvBtn"><i class="ico" data-i="download"></i>Dump CSV</button>
+              <button class="ghost" id="tpDlJsonBtn"><i class="ico" data-i="download"></i>Dump JSON</button>
+              <button class="ghost" id="tpDlMismatchBtn"><i class="ico" data-i="download"></i>Mismatch CSV</button>
+            </div>
+          </div>
+          <div class="purge-dump-scroll"><table id="tpDumpTable"></table></div>
+        </div>
+
+        <div class="panel">
+          <div class="ut-card-head"><h3>PID breakdown</h3></div>
+          <div class="data-table-wrap"><table id="tpPidTable"></table></div>
+        </div>
+
+        <div class="panel">
+          <div class="ut-card-head"><h3 id="tpMismatchTitle">Mismatch Report</h3></div>
+          <div class="data-table-wrap"><table id="tpMismatchTable"></table></div>
+        </div>
+      </div>
+      </div>
+      </div>
+    </section>
+
+    <section id="tab-tracker" class="tab-panel hidden">
+      <header class="screen-head">
+        <div class="screen-head-id">
+          <span class="h-ico"><i class="ico" data-i="outbound"></i></span>
+          <div><h3>Outside Totes</h3><p class="screen-sub">Where totes are and how long they have been outside</p></div>
+        </div>
+        <div class="screen-head-actions">
+          <button class="ghost" id="trCsvBtn" disabled><i class="ico" data-i="download"></i>Export CSV</button>
+          <button class="primary" id="trRunBtn"><i class="ico" data-i="play"></i>Run</button>
+        </div>
+      </header>
+      <details class="info-note">
+        <summary><i class="ico" data-i="info"></i>What this screen does</summary>
+        <p>Read-only bulk tote lookup: tracker &middot; location &middot; derived status &middot; last good location (for Bad Tracker totes) &middot; 5 most recent scanner events &middot; blocked-on-tote and purge-safety (for Outside Tote / Bad Tracker candidates only). Never pulls a tote or affects any operation.</p>
+      </details>
+
+      <div class="panel ot-setup">
+        <div class="ot-setup-row">
+          <div class="ot-field">
+            <span class="ot-label">Which totes</span>
+            <div class="al-seg" id="trModeSeg" role="group" aria-label="Which totes">
+              <button type="button" data-v="auto">All outside &gt; 12 h</button><button type="button" data-v="manual" class="active">Paste a list</button>
+            </div>
+          </div>
+          <p class="note ot-mode-note" id="trModeNote"></p>
+        </div>
+        <div class="ot-paste" id="trManualFields">
+          <textarea id="trTotes" rows="4" placeholder="Paste tote IDs - comma, space or newline separated (TL0000002607, TS0000009207, ...)"></textarea>
+          <span class="ot-count" id="trToteCount">0 valid totes</span>
+        </div>
+      </div>
+
+      <div class="ut-status" id="trStatusBar" hidden>
+        <span id="trProgressBar" class="progress-bar-track hidden"><span class="progress-bar-fill-indeterminate"></span></span>
+        <span id="trStatus"></span>
+      </div>
+      <div class="error hidden" id="trError"></div>
+
+      <div class="panel dd-empty-state" id="trEmpty">
+        <i class="ico" data-i="outbound"></i><h4>No run yet</h4><p>Choose which totes to look at, then press Run. Results stay on this screen until the next run.</p>
+      </div>
+
+      <div id="trSummaryPanel" hidden>
+        <p class="ot-auto-stats hidden" id="trAutoStats"></p>
+        <div class="ot-kpis">
+          <div class="ot-kpi" style="--c:var(--text)"><span>Totes analysed</span><b id="trSumTotal">0</b></div>
+          <div class="ot-kpi" style="--c:var(--blue)"><span>Outside Tote</span><b id="trSumOut">0</b></div>
+          <div class="ot-kpi" style="--c:var(--danger)"><span>Bad Tracker</span><b id="trSumBad">0</b></div>
+          <div class="ot-kpi" style="--c:var(--purple)"><span>Virtual Tote</span><b id="trSumVirtual">0</b></div>
+          <div class="ot-kpi" style="--c:var(--warn)"><span>Out 12&ndash;24 h</span><b id="trSum12">0</b></div>
+          <div class="ot-kpi" style="--c:var(--danger)"><span>Out over 24 h</span><b id="trSum24">0</b></div>
+        </div>
+      </div>
+
+      <div class="panel" id="trResultsPanel" hidden>
+        <div class="ut-card-head"><h3>Every tote</h3><span class="note" id="trResultsNote"></span></div>
+        <div class="ut-detail-tools">
+          <input type="search" id="trSearch" placeholder="Find a tote ID" aria-label="Find a tote ID" autocomplete="off" />
+          <div class="al-seg" id="trStatusSeg" role="group" aria-label="Status">
+            <button type="button" data-v="ALL" class="active">All</button><button type="button" data-v="Outside Tote">Outside</button><button type="button" data-v="Bad Tracker">Bad Tracker</button><button type="button" data-v="Virtual Tote">Virtual</button>
+          </div>
+          <div class="al-seg" id="trAgeSeg" role="group" aria-label="Time outside">
+            <button type="button" data-v="ALL" class="active">Any age</button><button type="button" data-v="12-24 Hours">12&ndash;24 h</button><button type="button" data-v="Above 24 Hours">Over 24 h</button>
+          </div>
+        </div>
+        <div class="tr-tablewrap">
+          <table class="tr-table" id="trResultsTable">
+            <thead><tr>
+              <th>Tote</th><th>Tracker</th><th>Location</th><th>Status</th><th>Last Good Loc</th>
+              <th>Blocked on PIDs</th><th>Purge</th><th>Lane</th>
+              <th id="trUpdatedHeader" class="tr-sortable" title="Click to sort oldest/newest">Updated <span class="tr-sort-arrow" id="trUpdatedSortArrow"></span></th>
+              <th>Age Bucket</th>
+              <th class="tr-auto-col">Zone</th><th class="tr-auto-col">Shuttle</th><th class="tr-auto-col">Shuttle Health</th><th class="tr-auto-col">Stock Check Blocked</th><th class="tr-auto-col">Bin Blocked</th>
+              <th class="tr-seg">Scan 1</th><th>Scan 2</th><th>Scan 3</th><th>Scan 4</th><th>Scan 5</th>
+            </tr></thead>
+            <tbody id="trResultsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-aisleOccupancy" class="tab-panel hidden">
+      <header class="screen-head">
+        <div class="screen-head-id">
+          <span class="h-ico"><i class="ico" data-i="grid"></i></span>
+          <div><h3>Aisle Occupancy</h3><p class="screen-sub">How full each aisle is, by level, side and depth</p></div>
+        </div>
+        <div class="screen-head-actions">
+          <span class="screen-fresh" id="aoUpdated"></span>
+          <button class="primary" id="aoRefreshBtn"><i class="ico" data-i="refresh"></i>Refresh</button>
+        </div>
+      </header>
+      <details class="info-note">
+        <summary><i class="ico" data-i="info"></i>What this screen does</summary>
+        <p>Read-only. The top half is the live occupancy of the six aisles from Grafana (refreshed every 2 minutes). The bottom half is the Location Audit breakdown from container tracking (refreshed every few minutes): pick an aisle to see it level by level, left vs right, front vs back, its busiest zones and shuttle health. The data is shared with the Dashboard tile and the Location Audit screen, so all three always agree.</p>
+      </details>
+      <div class="error hidden" id="aoError"></div>
+      <div class="panel dd-empty-state" id="aoEmpty">
+        <i class="ico" data-i="grid"></i><h4>Loading aisle occupancy&hellip;</h4><p>The server reads the live occupancy and the Location Audit data and pushes them here.</p>
+      </div>
+      <div class="ao" id="aoBody" hidden></div>
+    </section>
+
+    <section id="tab-asrsLocations" class="tab-panel hidden">
+      <header class="screen-head">
+        <div class="screen-head-id">
+          <span class="h-ico"><i class="ico" data-i="grid"></i></span>
+          <div><h3>Location Audit</h3><p class="screen-sub">ASRS racking by aisle: occupied and empty slots</p></div>
+        </div>
+        <div class="screen-head-actions">
+          <div class="al-viewmode" role="radiogroup" aria-label="View">
+            <label><input type="radio" name="alViewMode" value="2d" checked /> 2D grid</label>
+            <label><input type="radio" name="alViewMode" value="3d" /> 3D model</label>
+          </div>
+          <button class="primary" id="alRunBtn"><i class="ico" data-i="play"></i>Run</button>
+        </div>
+      </header>
+      <details class="info-note">
+        <summary><i class="ico" data-i="info"></i>What this screen does</summary>
+        <p>Read-only visual replica of the physical ASRS racking, built from the same Location data as Outside Tote Analysis's Auto Mode - every occupied slot (with tote details on hover) plotted against every theoretical slot, so empty space can be sent for a physical audit. Never pulls a tote or affects any operation.</p>
+      </details>
+
+      <div class="ut-status" id="alStatusBar" hidden>
+        <span id="alProgressBar" class="progress-bar-track hidden"><span class="progress-bar-fill-indeterminate"></span></span>
+        <span id="alStatus"></span>
+      </div>
+      <div class="error hidden" id="alError"></div>
+
+      <div class="panel dd-empty-state" id="alEmpty">
+        <i class="ico" data-i="grid"></i><h4>No audit loaded yet</h4><p>Press Run to read every tote's location. The racking then appears here aisle by aisle, five shelves at a time, and stays live while this screen is open.</p>
+      </div>
+
+      <div class="al-results hidden" id="alResultsPanel">
+        <div class="panel al-pick">
+          <div class="al-pick-row">
+            <div class="ot-field">
+              <span class="ot-label">Aisle</span>
+              <div id="alAisleButtons" class="al-aisle-buttons"></div>
+            </div>
+            <div class="ot-field al-pick-levels">
+              <span class="ot-label">Level <span class="al-pick-hint">5 shelves each, audit one at a time</span></span>
+              <div id="alLevelButtons" class="al-aisle-buttons"></div>
+            </div>
+          </div>
+        </div>
+
+        <p class="al-scope" id="alScopeNote"></p>
+        <div class="al-kpis">
+          <div class="ot-kpi" style="--c:var(--text)"><span>Total slots</span><b id="alSumTotal">0</b><small>in this level</small></div>
+          <div class="ot-kpi" style="--c:var(--ok)"><span>Occupied</span><b id="alSumOccupied">0</b><small id="alSumOccPct"></small></div>
+          <div class="ot-kpi" style="--c:var(--danger)"><span>Empty</span><b id="alSumEmpty">0</b><small id="alSumEmptySub">to audit physically</small></div>
+          <div class="ot-kpi" style="--c:var(--warn)"><span>Unparsed locations</span><b id="alSumUnparsed">0</b><small>whole ASRS</small></div>
+          <div class="ot-kpi" style="--c:var(--danger)"><span>Duplicate slots</span><b id="alSumDup">0</b><small>whole ASRS</small></div>
+        </div>
+
+        <div class="panel al-map">
+          <div class="ut-card-head al-map-head">
+            <div class="al-legend">
+              <span><i class="al-swatch al-sw-occupied"></i> Occupied</span>
+              <span><i class="al-swatch al-sw-empty"></i> Empty - not audited</span>
+              <span><i class="al-swatch al-sw-audited"></i> Audited empty</span>
+              <span><i class="al-swatch al-sw-found"></i> Tote found</span>
+              <span><i class="al-swatch al-sw-dup"></i> Duplicate (anomaly)</span>
+            </div>
+            <div class="al-toolbar-actions">
+              <label class="ot-label" for="alCsvScope">Empty locations</label>
+              <select id="alCsvScope">
+                <option value="level" selected>This level only</option>
+                <option value="aisle">Whole aisle (all levels)</option>
+                <option value="all">All aisles</option>
+              </select>
+              <button class="ghost" id="alCsvBtn"><i class="ico" data-i="download"></i>Download CSV</button>
+            </div>
+          </div>
+
+        <div class="al-canvas-wrap" id="alCanvasWrap">
+          <canvas id="alCanvas"></canvas>
+        </div>
+        <div class="al-canvas-wrap al3d hidden" id="al3dWrap">
+          <div class="al3d-bar">
+            <div class="al3d-seg" role="radiogroup" aria-label="Camera">
+              <label title="Fly through the aisle between the two racks"><input type="radio" name="al3dCameraMode" value="walkway" checked /> Walkway</label>
+              <label title="Face one rack wall, flat on, to audit it shelf by shelf"><input type="radio" name="al3dCameraMode" value="audit" /> Audit wall</label>
+            </div>
+            <span id="al3dAuditSideWrap" class="al3d-side hidden">
+              <span class="al3d-seg" role="radiogroup" aria-label="Rack wall">
+                <label><input type="radio" name="al3dAuditSide" value="left" checked /> Left wall</label>
+                <label><input type="radio" name="al3dAuditSide" value="right" /> Right wall</label>
+              </span>
+              <button type="button" class="al3d-btn" id="al3dAuditPrevBtn" title="Pan left along the rack" aria-label="Pan left"><i class="ico" data-i="chevright" style="transform: rotate(180deg)"></i></button>
+              <button type="button" class="al3d-btn" id="al3dAuditNextBtn" title="Pan right along the rack" aria-label="Pan right"><i class="ico" data-i="chevright"></i></button>
+            </span>
+            <button class="al3d-btn al3d-full" id="al3dFullscreenBtn"><i class="ico" data-i="maximize"></i>Fullscreen</button>
+          </div>
+          <div class="al3d-stage">
+            <div id="al3dContainer"></div>
+            <div class="al3d-hud" id="al3dHud" aria-live="off"></div>
+            <ul class="al3d-legend" aria-label="Legend">
+              <li><i class="al-swatch al-sw-occupied"></i>Occupied</li>
+              <li><i class="al-swatch al-sw-empty"></i>Empty</li>
+              <li><i class="al-swatch al-sw-dup"></i>Duplicate</li>
+            </ul>
+            <p class="al3d-hint" id="al3dHint"></p>
+          </div>
+        </div>
+        </div>
+        <!-- Shared by 2D and 3D hover (position:fixed, viewport-relative -
+             its DOM parent doesn't affect where it's positioned). During 3D
+             fullscreen, asrsLocations.js temporarily reparents this INTO
+             al3dWrap and back out again on exit - the Fullscreen API only
+             paints the fullscreen element and its own descendants, so left
+             here it would simply not render at all while fullscreen is
+             active, even though the hover/raycast logic keeps working. -->
+        <div id="alTooltip" class="al-tooltip hidden"></div>
+      </div>
+    </section>
+
+    <section id="tab-cngValidator" class="tab-panel hidden">
+      <header class="screen-head">
+        <div class="screen-head-id">
+          <span class="h-ico"><i class="ico" data-i="checkcircle"></i></span>
+          <div><h3>Concinity NexS Grafana Inventory Validator</h3><p class="screen-sub">Three-way partition check across Quadron, NexS and Grafana</p></div>
+        </div>
+        <div class="screen-head-actions">
+          <button class="ghost" id="cngCopyBtn" disabled><i class="ico" data-i="copy"></i>Copy</button>
+          <button class="ghost" id="cngCsvBtn" disabled><i class="ico" data-i="download"></i>Export CSV</button>
+          <button class="primary" id="cngRunBtn"><i class="ico" data-i="play"></i>Validate</button>
+        </div>
+      </header>
+      <details class="info-note">
+        <summary><i class="ico" data-i="info"></i>What this screen does</summary>
+        <p>Read-only three-way tote-partition reconciliation across Quadron, NexS, and Grafana. MATCH/MISMATCH/PARTIAL/MISSING verdicts per tote, with a per-partition drill-down. Never pulls a tote or affects any operation.</p>
+      </details>
+
+      <div class="panel ot-setup">
+        <span class="ot-label">Totes to validate</span>
+        <div class="ot-paste">
+          <textarea id="cngTotes" rows="4" placeholder="Paste tote IDs - comma, space or newline separated (TS0000018492, TL0000002607, ...)" aria-label="Tote list"></textarea>
+          <span class="ot-count" id="cngToteCount">0 valid totes</span>
+        </div>
+      </div>
+
+      <div class="ut-status" id="cngStatusBar" hidden>
+        <span id="cngProgressBar" class="progress-bar-track hidden"><span class="progress-bar-fill-indeterminate"></span></span>
+        <span id="cngStatus"></span>
+      </div>
+      <div class="error hidden" id="cngError"></div>
+
+      <div class="panel dd-empty-state" id="cngEmpty">
+        <i class="ico" data-i="checkcircle"></i><h4>No validation yet</h4><p>Paste the totes above and press Validate. The verdict totals and the per-tote, per-partition comparison appear here.</p>
+      </div>
+
+      <div id="cngSummaryPanel" style="display:none;">
+        <div class="ot-kpis cng-kpis">
+          <div class="ot-kpi" style="--c:var(--text)"><span>Totes checked</span><b id="cngSumTotal">0</b></div>
+          <div class="ot-kpi" style="--c:var(--ok)"><span>Match</span><b id="cngSumMatch">0</b></div>
+          <div class="ot-kpi" style="--c:var(--danger)"><span>Mismatch</span><b id="cngSumMismatch">0</b></div>
+          <div class="ot-kpi" style="--c:var(--warn)"><span>Partial / Missing</span><b id="cngSumPartial">0</b></div>
+        </div>
+      </div>
+
+      <div class="panel" id="cngResultsPanel" hidden>
+        <div class="ut-card-head"><h3>Every tote</h3><span class="note">click a tote for its partitions</span></div>
+        <div class="ut-detail-tools">
+          <div class="al-seg" role="group" aria-label="Verdict">
+            <button type="button" class="cng-filter-btn active" data-filter="all">All</button><button type="button" class="cng-filter-btn" data-filter="MATCH">Match</button><button type="button" class="cng-filter-btn" data-filter="MISMATCH">Mismatch</button><button type="button" class="cng-filter-btn" data-filter="PARTIAL">Partial</button><button type="button" class="cng-filter-btn" data-filter="MISSING">Missing</button>
+          </div>
+        </div>
+        <div class="cng-tablewrap">
+          <table class="cng-table">
+            <thead><tr><th></th><th>Tote</th><th>Quadron</th><th>NexS</th><th>Grafana</th><th>Verdict</th></tr></thead>
+            <tbody id="cngResultsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-bulkInventoryCheck" class="tab-panel hidden">
+      <header class="screen-head">
+        <div class="screen-head-id">
+          <span class="h-ico"><i class="ico" data-i="package"></i></span>
+          <div><h3>Bulk Tote Inv Check</h3><p class="screen-sub">Per-partition barcode and SKU for many totes at once</p></div>
+        </div>
+        <div class="screen-head-actions">
+          <button class="ghost" id="bicCsvBtn" disabled><i class="ico" data-i="download"></i>Export CSV</button>
+          <button class="primary" id="bicRunBtn"><i class="ico" data-i="play"></i>Check</button>
+        </div>
+      </header>
+      <details class="info-note">
+        <summary><i class="ico" data-i="info"></i>What this screen does</summary>
+        <p>Paste a bulk list of totes - get every per-partition barcode/SKU on file for each one, straight from Grafana's Tote Level Inventory dashboard. Read-only, never pulls a tote or affects any operation.</p>
+      </details>
+
+      <div class="panel ot-setup">
+        <span class="ot-label">Totes to check</span>
+        <div class="ot-paste">
+          <textarea id="bicTotes" rows="4" placeholder="Paste tote IDs - comma, space or newline separated (TL0000025362, TS0000018492, ...)" aria-label="Tote list"></textarea>
+          <span class="ot-count" id="bicToteCount">0 valid totes</span>
+        </div>
+      </div>
+
+      <div class="ut-status" id="bicStatusBar" hidden>
+        <span id="bicProgressBar" class="progress-bar-track hidden"><span class="progress-bar-fill-indeterminate"></span></span>
+        <span id="bicStatus"></span>
+      </div>
+      <div class="error hidden" id="bicError"></div>
+
+      <div class="panel dd-empty-state" id="bicEmpty">
+        <i class="ico" data-i="package"></i><h4>No check yet</h4><p>Paste the totes above and press Check. How many were found, and every partition's barcode and SKU, appear here.</p>
+      </div>
+
+      <div id="bicSummaryPanel" style="display:none;">
+        <div class="ot-kpis bic-kpis">
+          <div class="ot-kpi" style="--c:var(--text)"><span>Totes requested</span><b id="bicSumTotal">0</b></div>
+          <div class="ot-kpi" style="--c:var(--ok)"><span>Found</span><b id="bicSumFound">0</b></div>
+          <div class="ot-kpi" style="--c:var(--danger)"><span>Not found</span><b id="bicSumNotFound">0</b></div>
+          <div class="ot-kpi" style="--c:var(--blue)"><span>Barcodes</span><b id="bicSumBarcodes">0</b></div>
+          <div class="ot-kpi" style="--c:var(--purple)"><span>Unique SKUs</span><b id="bicSumSkus">0</b></div>
+        </div>
+      </div>
+
+      <div class="panel" id="bicResultsPanel" hidden>
+        <div class="ut-card-head"><h3>Every partition</h3><span class="note" id="bicResultsNote"></span></div>
+        <div class="ut-detail-tools">
+          <input type="search" id="bicSearch" placeholder="Find a tote, barcode or SKU" aria-label="Find a tote, barcode or SKU" autocomplete="off" />
+          <div class="al-seg" id="bicFilterSeg" role="group" aria-label="Show">
+            <button type="button" data-v="ALL" class="active">All</button><button type="button" data-v="FOUND">Found</button><button type="button" data-v="NOT_FOUND">Not found</button>
+          </div>
+        </div>
+        <div class="cng-tablewrap">
+          <table class="cng-table bic-table">
+            <thead><tr><th>Tote</th><th>Status</th><th>Partition</th><th>Barcode (Serial ID)</th><th>SKU</th><th>Created</th></tr></thead>
+            <tbody id="bicResultsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-totePuller" class="tab-panel hidden">
+      <header class="screen-head">
+        <div class="screen-head-id">
+          <span class="h-ico"><i class="ico" data-i="hand"></i></span>
+          <div><h3>Manual Puller</h3><p class="screen-sub">Call a list of totes through Quadron, one at a time</p></div>
+        </div>
+      </header>
+      <details class="info-note">
+        <summary><i class="ico" data-i="info"></i>What this screen does</summary>
+        <p>Pulls totes sequentially, one at a time, via the PULL_QUADRON_TOTE capability, executed by the backend with the shared Concinity login. Every pull is a real, mutating request to Quadron.</p>
+      </details>
+      <div class="ops-grid">
+      <div class="ops-main">
+      <div class="panel mt-config">
+        <div class="cfg-title-row">
+          <span class="card-title">New pull</span>
+          <div class="status-inline">
+            <span class="status-dot" id="mtInlineStatusDot"></span>
+            <span class="status-label" id="mtInlineStatusLabel">Idle</span>
+            <span class="status-sep">&middot;</span>
+            <span id="mtInlineStatusMeta">&mdash;</span>
+          </div>
+        </div>
+
+        <div class="mt-block mt-b-totes">
+          <span class="ot-label">Totes to call</span>
+          <div class="ot-paste">
+            <textarea id="mtToteList" rows="6" placeholder="Paste tote IDs - comma, space or newline separated (TL0000002607, TS0000009207, ...)"></textarea>
+            <span class="ot-count" id="mtToteCount">0 queued</span>
+          </div>
+        </div>
+
+        <div class="mt-block mt-b-where">
+          <span class="ot-label">Where to send them</span>
+          <label class="mt-switch"><input type="checkbox" id="mtMultiZoneEnabled" /><span class="mt-switch-ui" aria-hidden="true"></span><span>Split across several zones</span></label>
+          <div class="mt-zone-line">
+            <label class="mt-zone" id="mtSingleZonePanel"><span>Zone (station)</span><input type="text" id="mtZone" placeholder="e.g. 12" /></label>
+            <span class="mt-fixed" title="Fixed server default - not yet operator-configurable in this webapp">Retry delay <b>5 s</b> &middot; fixed</span>
+          </div>
+          <div id="mtMultiZonePanel" class="hidden mt-multi">
+            <table>
+              <thead><tr><th>Zone</th><th>%</th><th></th></tr></thead>
+              <tbody id="mtZoneRows"></tbody>
+            </table>
+            <div class="mt-multi-foot">
+              <button class="ghost" id="mtAddZoneBtn">+ Add zone</button>
+              <span class="note">Total: <b id="mtZoneTotal">0</b>% &mdash; <span id="mtZoneTotalStatus"></span></span>
+            </div>
+          </div>
+        </div>
+
+        <label class="mt-switch mt-purge" title="Tick when these totes are being called to be purged (the whole tote marked Bermuda to free space). After the count, a tote that Quadron shows empty is reported as Purged; one that still has stock stays a normal CC Done."><input type="checkbox" id="mtPurge" /><span class="mt-switch-ui" aria-hidden="true"></span><span><b>Purge pull</b><small>These totes will be purged - marked short on purpose</small></span></label>
+
+        <div class="error hidden" id="mtError"></div>
+        <div class="mt-start-row">
+          <span class="note">Every pull is a real request to Quadron.</span>
+          <button class="primary" id="mtStartBtn"><i class="ico" data-i="play"></i>Start pulling</button>
+        </div>
+      </div>
+
+      </div>
+      <div class="ops-side">
+        <div class="ops-idle">
+          <span class="h-ico"><i class="ico" data-i="clock"></i></span>
+          <h4>No session running</h4>
+          <p>Start a pull on the left. Progress, the pull-rate limit and each tote's result appear here as it runs.</p>
+        </div>
+      <div class="panel" id="mtStatusPanel" style="display:none;">
+        <div class="mt-session-head">
+          <h3>Session <span id="mtSessionId"></span></h3>
+          <span id="mtStatusPill" class="status-pill"></span>
+        </div>
+        <p class="note mt-session-note">Runs on the server. Leaving this tab or closing the browser does not stop it &mdash; use Stop.</p>
+
+        <div class="pull-limit-card" id="mtPullLimitCard">
+          <div class="pull-limit-head">
+            <span>Manual Pull Limit</span>
+            <span><b id="mtPullLimitCount">0</b> / <span id="mtPullLimitMax">&mdash;</span></span>
+          </div>
+          <div class="pull-limit-track"><div class="pull-limit-fill" id="mtPullLimitFill" style="width:0%"></div></div>
+          <div class="pull-limit-meta">
+            <span>Window: <strong>6 Minutes</strong></span>
+            <span>Remaining: <strong id="mtPullLimitRemaining">&mdash;</strong></span>
+          </div>
+        </div>
+        <div class="pull-limit-modal-overlay hidden" id="mtPullLimitModalOverlay">
+          <div class="pull-limit-modal">
+            <h3>Pull-rate limit reached</h3>
+            <p>The shared rolling-window pull limit has been reached. Dispatch will resume automatically once a
+               slot frees, in about <b id="mtPullLimitWaitSec">&mdash;</b>s. No action is needed - this closes on
+               its own.</p>
+            <button class="link" id="mtPullLimitDismissBtn">Dismiss</button>
+          </div>
+        </div>
+
+        <div class="action-row">
+          <button class="primary danger-btn" id="mtStopBtn"><i class="ico" data-i="stop"></i>Stop</button>
+          <button class="skip" id="mtSkipBtn" disabled title="Not available - this webapp's engine has no skip-in-flight-tote capability yet"><i class="ico" data-i="skip"></i>Skip Tote</button>
+          <button class="ghost subtle" id="mtClearLogBtn">Clear Log</button>
+        </div>
+
+        <section class="progress-card">
+          <div class="progress-head">
+            <span id="mtProgressLabel">Idle</span>
+            <span id="mtProgress">0 / 0</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="mtProgressFill" style="width:0%"></div></div>
+          <p class="mt-current">
+            Current <b id="mtCurrentTote">&mdash;</b> &rarr; Zone <b id="mtCurrentZone">&mdash;</b>
+            <span>attempt <b id="mtCurrentAttempt">&mdash;</b>/5</span>
+          </p>
+        </section>
+
+        <section class="stats-card">
+          <div class="stats-header">
+            <span class="stats-title">Session Tote Summary</span>
+          </div>
+          <div class="stats-row five">
+            <div class="stat-box"><span class="stat-value" id="mtStatTotal">0</span><span class="stat-label">Total</span></div>
+            <div class="stat-box green"><span class="stat-value" id="mtStatCalled">0</span><span class="stat-label">Called</span></div>
+            <div class="stat-box yellow"><span class="stat-value" id="mtStatAlready">0</span><span class="stat-label">Already Queued</span></div>
+            <div class="stat-box red"><span class="stat-value" id="mtStatUnavail">0</span><span class="stat-label">Not Available</span></div>
+            <div class="stat-box muted-col"><span class="stat-value" id="mtStatSkipped">0</span><span class="stat-label" title="Failed, uncertain or cancelled. The Result column says which; verify uncertain ones before retrying.">Not completed</span></div>
+          </div>
+          <div class="tote-table-wrap">
+            <table class="tote-table">
+              <thead><tr><th>Tote</th><th>Zone</th><th>Attempts</th><th>Verdict</th></tr></thead>
+              <tbody id="mtResultsBody"></tbody>
+            </table>
+            <p class="table-empty hidden" id="mtResultsEmpty">No totes processed yet.</p>
+          </div>
+        </section>
+
+        <div class="log-header">
+          <span class="log-title">Activity Log</span>
+          <div class="log-legend">
+            <span class="ll-item op-ok"><i class="ll-dot"></i>Called</span>
+            <span class="ll-item op-warn"><i class="ll-dot"></i>Already Queued</span>
+            <span class="ll-item op-err"><i class="ll-dot"></i>Not Available</span>
+            <span class="ll-item op-ignore">&#9679; Not completed</span>
+          </div>
+        </div>
+        <section class="log-panel" id="mtLog" aria-live="polite"></section>
+      </div>
+
+      <div class="panel pl-link-card">
+        <div><h3>Session history</h3><p class="note">Every finished Manual and Auto session, with each tote's result, is in Pull Logs.</p></div>
+        <a class="link pl-open" href="#pullerLogs"><i class="ico" data-i="file"></i>Open Pull Logs</a>
+      </div>
+      </div>
+      </div>
+    </section>
+
+    <section id="tab-autoPuller" class="tab-panel hidden">
+      <header class="screen-head">
+        <div class="screen-head-id">
+          <span class="h-ico"><i class="ico" data-i="zap"></i></span>
+          <div><h3>Auto Puller</h3><p class="screen-sub">Priority-based automatic pulls: SD, then P0, P1, P2</p></div>
+        </div>
+      </header>
+      <details class="info-note">
+        <summary><i class="ico" data-i="info"></i>What this screen does</summary>
+        <p>Continuously pulls totes from the live Locked Tote Dump / Supervisor Dump / Quadron Inventory, prioritised SD &rsaquo; P0 &rsaquo; P1 &rsaquo; P2, via the same PULL_QUADRON_TOTE capability and single-flight Quadron lock as Manual. Every pull is a real, mutating request to Quadron.</p>
+      </details>
+      <div class="ops-banner hidden" id="atOthersNote" role="status"></div>
+      <div class="ops-grid">
+      <div class="ops-main">
+      <div class="panel mt-config at-config">
+        <div class="cfg-title-row">
+          <span class="card-title">Auto run</span>
+          <div class="status-inline">
+            <span class="status-dot" id="atInlineStatusDot"></span>
+            <span class="status-label" id="atInlineStatusLabel">Idle</span>
+            <span class="status-sep">&middot;</span>
+            <span id="atInlineStatusMeta">&mdash;</span>
+          </div>
+        </div>
+
+        <div class="at-mode">
+          <div class="at-mode-k"><span>Zones</span><small>Send every tote to one zone, or split the calls across several zones by percentage.</small></div>
+          <label class="mt-switch"><input type="checkbox" id="atMultiZoneEnabled" /><span class="mt-switch-ui" aria-hidden="true"></span><span>Split across several zones</span></label>
+        </div>
+        <div id="atMultiZonePanel" class="hidden mt-multi at-multi">
+          <table>
+            <thead><tr><th>Zone</th><th>%</th><th></th></tr></thead>
+            <tbody id="atZoneRows"></tbody>
+          </table>
+          <div class="mt-multi-foot">
+            <button class="ghost" id="atAddZoneBtn">+ Add zone</button>
+            <span class="note">Total: <b id="atZoneTotal">0</b>% &mdash; <span id="atZoneTotalStatus"></span></span>
+          </div>
+        </div>
+
+        <div class="at-settings">
+          <div class="at-tile call at-tile-zone">
+            <div class="at-tile-head"><span class="at-tile-ico"><i class="ico" data-i="outbound"></i></span><span>Zone (station)</span></div>
+            <div class="at-tile-val" id="atSingleZonePanel"><input type="text" id="atZone" placeholder="e.g. 12" aria-label="Zone (station)" /></div>
+          </div>
+          <div class="at-tile call">
+            <div class="at-tile-head"><span class="at-tile-ico"><i class="ico" data-i="layers"></i></span><span>Batch size</span></div>
+            <div class="at-tile-val"><input type="number" id="atBatchSize" placeholder="5" aria-label="Batch size" /><span>totes</span></div>
+            <small>called at once</small>
+          </div>
+          <div class="at-tile call">
+            <div class="at-tile-head"><span class="at-tile-ico"><i class="ico" data-i="clock"></i></span><span>Tote interval</span></div>
+            <div class="at-tile-val"><input type="number" id="atCallInterval" placeholder="5" aria-label="Tote interval" /><span>sec</span></div>
+            <small>between each tote call</small>
+          </div>
+          <div class="at-tile call">
+            <div class="at-tile-head"><span class="at-tile-ico"><i class="ico" data-i="refresh"></i></span><span>Batch interval</span></div>
+            <div class="at-tile-val"><input type="number" id="atBatchInterval" placeholder="1" aria-label="Batch interval" /><span>min</span></div>
+            <small>pause after each round</small>
+          </div>
+          <div class="at-tile queue">
+            <div class="at-tile-head"><span class="at-tile-ico"><i class="ico" data-i="lock"></i></span><span>Locked Tote Dump</span></div>
+            <div class="at-tile-val"><input type="number" id="atLockedRefresh" placeholder="30" aria-label="Locked Tote Dump" /><span>min</span></div>
+            <small id="atLockedLastFetch">Last fetch: never</small>
+          </div>
+          <div class="at-tile queue">
+            <div class="at-tile-head"><span class="at-tile-ico"><i class="ico" data-i="zap"></i></span><span>Supervisor Dump</span></div>
+            <div class="at-tile-val"><input type="number" id="atSupervisorRefresh" placeholder="60" aria-label="Supervisor Dump" /><span>min</span></div>
+            <small id="atSuperLastFetch">Last fetch: never</small>
+          </div>
+          <div class="at-tile queue">
+            <div class="at-tile-head"><span class="at-tile-ico"><i class="ico" data-i="refresh"></i></span><span>Retry delay</span></div>
+            <div class="at-tile-val"><input type="number" id="atRetryDelay" placeholder="5" aria-label="Retry delay" /><span>sec</span></div>
+            <small>before a retry</small>
+          </div>
+          <div class="at-tile queue">
+            <div class="at-tile-head"><span class="at-tile-ico"><i class="ico" data-i="clock"></i></span><span>Cooldown</span></div>
+            <div class="at-tile-val"><input type="number" id="atCooldown" placeholder="60" aria-label="Cooldown" /><span>min</span></div>
+            <small>don't re-call the same tote</small>
+          </div>
+          <div class="at-tile safety at-tile-reminder">
+            <div class="at-tile-head"><span class="at-tile-ico"><i class="ico" data-i="bell"></i></span><span>Reminder</span></div>
+            <div class="at-tile-val"><input type="number" id="atReminder" min="1" max="1440" placeholder="30" aria-label="Reminder interval" /><span>min</span></div>
+            <small>Every this often a pop-up asks everyone with Auto Puller to keep it running. If nobody answers within 1 minute, Auto stops by itself.</small>
+          </div>
+          <p class="note at-settings-note"><span class="at-key call"></span>Calling <span class="at-key queue"></span>Queue and retries &middot; Blank fields use the server default. Priority is fixed: 1 tote for a PID in ASRS &rarr; P0, 2&ndash;3 totes &rarr; P1, 4+ totes &rarr; P2.</p>
+        </div>
+
+        <div class="error hidden" id="atError"></div>
+        <div class="mt-start-row">
+          <span class="note">Every pull is a real request to Quadron. Preview first to see the queue without calling anything.</span>
+          <div class="at-start-btns">
+            <button class="ghost" id="atPreviewBtn"><i class="ico" data-i="search"></i>Preview queue</button>
+            <button class="primary" id="atStartBtn"><i class="ico" data-i="play"></i>Start Auto</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel at-preview" id="atPreviewPanel" style="display:none;">
+        <div class="preview-banner">PREVIEW ONLY &mdash; NO TOTES WILL BE CALLED</div>
+        <p class="note">Read-only: live Locked/Supervisor/Quadron data run through Auto's own classification, diff,
+           and queue-ordering logic. Nothing is dispatched, no session is created, no tote is called.</p>
+        <p class="note">Generated: <b id="apGeneratedAt">&mdash;</b> &middot; Calling station: <b id="apCallingStation">&mdash;</b>
+           &middot; Batch size: <b id="apBatchSize">&mdash;</b></p>
+        <div class="at-tiles five">
+          <div class="ot-kpi" style="--c:var(--text)"><span>Total locked</span><b id="apTotalLocked">0</b></div>
+          <div class="ot-kpi" style="--c:var(--purple)"><span>SD</span><b id="apSd">0</b></div>
+          <div class="ot-kpi" style="--c:var(--danger)"><span>P0</span><b id="apP0">0</b></div>
+          <div class="ot-kpi" style="--c:var(--warn)"><span>P1</span><b id="apP1">0</b></div>
+          <div class="ot-kpi" style="--c:var(--muted)"><span>P2</span><b id="apP2">0</b></div>
+        </div>
+        <p class="note">Total queued: <b id="apTotalQueued">0</b></p>
+        <div class="error hidden" id="apDegradedNote"></div>
+        <p class="note">Differential since the last preview: <b id="apDiffNew">0</b> new &middot;
+           <b id="apDiffRemoved">0</b> removed &middot; <b id="apDiffReprioritized">0</b> reprioritized</p>
+
+        <h4>First batch Auto would attempt</h4>
+        <div class="at-table">
+          <table>
+            <thead><tr><th>Tote</th><th>Priority</th><th>Location</th><th>Total Inv</th><th>Locked Since</th><th>Reason</th></tr></thead>
+            <tbody id="apFirstBatchBody"></tbody>
+          </table>
+        </div>
+
+        <h4>Full queue (priority order)</h4>
+        <div class="at-table tall">
+          <table>
+            <thead><tr><th>Tote</th><th>Priority</th><th>Location</th><th>Total Inv</th><th>Locked Since</th><th>Reason</th></tr></thead>
+            <tbody id="apQueueBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      </div>
+      <div class="ops-side">
+        <div class="ops-idle">
+          <span class="h-ico"><i class="ico" data-i="clock"></i></span>
+          <h4>No session running</h4>
+          <p>Start Auto above. The queue, progress and each tote's result appear here while it runs.</p>
+        </div>
+      <div class="panel" id="atStatusPanel" style="display:none;">
+        <div class="mt-session-head">
+          <h3>Session <span id="atSessionId"></span></h3>
+          <span id="atStatusPill" class="status-pill"></span>
+        </div>
+        <p class="note mt-session-note">Runs on the server. Leaving this tab or closing the browser does not stop it &mdash; use Stop.</p>
+
+        <div class="at-controls">
+          <div class="pull-limit-card at-reminder-card" id="atReminderCard">
+            <div class="pull-limit-head">
+              <span>Reminder</span>
+              <span id="atReminderEvery">&mdash;</span>
+            </div>
+            <div class="at-reminder-next" id="atReminderNext">&mdash;</div>
+            <div class="pull-limit-meta">
+              <span id="atReminderLast">Not acknowledged yet</span>
+              <button type="button" class="link" id="atReminderAckBtn">Keep running</button>
+            </div>
+          </div>
+          <div class="action-row">
+            <button class="primary" id="atPauseBtn">&#9208; Pause</button>
+            <button class="primary" id="atResumeBtn" style="display:none;"><i class="ico" data-i="play"></i>Resume</button>
+            <button class="primary danger-btn" id="atStopBtn"><i class="ico" data-i="stop"></i>Stop</button>
+            <button class="skip" id="atSkipBtn" disabled title="Not available - this webapp's engine has no skip-in-flight-tote capability yet"><i class="ico" data-i="skip"></i>Skip Tote</button>
+            <button class="ghost subtle" id="atClearQueueBtn" disabled title="Not available - Auto's queue is populated automatically from the live classification pipeline, not manually cleared">&#128465; Clear Queue</button>
+          </div>
+        </div>
+
+        <section class="stats-card">
+          <div class="stats-header"><span class="stats-title">Runtime</span></div>
+          <div class="at-tiles four">
+            <div class="ot-kpi" style="--c:var(--accent)"><span>Start time</span><b id="atStartTime">&mdash;</b></div>
+            <div class="ot-kpi" style="--c:var(--accent)"><span>Elapsed runtime</span><b id="atElapsed">&mdash;</b></div>
+            <div class="ot-kpi" style="--c:var(--accent)"><span>Last data refresh</span><b id="atLastFetch">&mdash;</b></div>
+            <div class="ot-kpi" style="--c:var(--accent)"><span>Batches run</span><b id="atBatchesRunRuntime">0</b></div>
+          </div>
+          <p class="note at-fine">Auto has no fixed "next batch" time - it dispatches continuously (one tote every Call Interval)
+             and only pauses between batches for the configured Batch Interval, counted from when the current batch finishes.</p>
+        </section>
+
+        <section class="stats-card">
+          <div class="stats-header"><span class="stats-title">Current batch</span></div>
+          <div class="at-tiles four">
+            <div class="ot-kpi" style="--c:var(--blue)"><span>Batch size</span><b id="atBatchSizeLive">&mdash;</b></div>
+            <div class="ot-kpi" style="--c:var(--blue)"><span>Position in batch</span><b id="atBatchPosition">&mdash;</b></div>
+            <div class="ot-kpi" style="--c:var(--blue)"><span>Current PID</span><b id="atCurrentPid">&mdash;</b></div>
+            <div class="ot-kpi" style="--c:var(--blue)"><span>Batch status</span><b id="atBatchStatus">&mdash;</b></div>
+          </div>
+          <p class="mt-current">
+            Current <b id="atCurrentTote">&mdash;</b> [<b id="atCurrentPriority">&mdash;</b>] &rarr; Zone <b id="atCurrentZone">&mdash;</b>
+            <span>attempt <b id="atCurrentAttempt">&mdash;</b>/5</span>
+          </p>
+        </section>
+
+        <section class="stats-card">
+          <div class="stats-header">
+            <span class="stats-title">Queue</span>
+            <span class="stats-meta">Starvation prevention active &mdash; P2 totes guaranteed every 10 batches</span>
+          </div>
+          <div class="stats-row six">
+            <div class="stat-box purple"><span class="stat-value" id="atQueueSd">0</span><span class="stat-label">&#9889; SD Priority</span></div>
+            <div class="stat-box red"><span class="stat-value" id="atQueueP0">0</span><span class="stat-label">P0 Critical</span></div>
+            <div class="stat-box yellow"><span class="stat-value" id="atQueueP1">0</span><span class="stat-label">P1 High</span></div>
+            <div class="stat-box green"><span class="stat-value" id="atQueueP2">0</span><span class="stat-label">P2 Standard</span></div>
+            <div class="stat-box"><span class="stat-value" id="atQueueTotal">0</span><span class="stat-label">Total</span></div>
+            <div class="stat-box"><span class="stat-value" id="atStatBatches">0</span><span class="stat-label">Batches Run</span></div>
+          </div>
+          <div class="tote-table-wrap">
+            <table class="tote-table">
+              <thead><tr><th>Tote</th><th>Priority</th><th>Worst PID</th><th>Added</th></tr></thead>
+              <tbody id="atQueueBody"></tbody>
+            </table>
+            <p class="table-empty hidden" id="atQueueEmpty">Queue is empty.</p>
+          </div>
+        </section>
+
+        <section class="stats-card">
+          <div class="stats-header"><span class="stats-title">Session statistics</span></div>
+          <div class="stats-row five">
+            <div class="stat-box green"><span class="stat-value" id="atStatCalled">0</span><span class="stat-label">Called</span></div>
+            <div class="stat-box yellow"><span class="stat-value" id="atStatAlreadyQueued">0</span><span class="stat-label">Already Queued</span></div>
+            <div class="stat-box red"><span class="stat-value" id="atStatNotAvailable">0</span><span class="stat-label">Not Available</span></div>
+            <div class="stat-box muted-col"><span class="stat-value" id="atStatSkipped">0</span><span class="stat-label" title="Failed, uncertain or cancelled. The Result column says which; verify uncertain ones before retrying.">Not completed</span></div>
+            <div class="stat-box muted-col"><span class="stat-value" id="atStatIgnored">0</span><span class="stat-label">Ignored (Cooldown)</span></div>
+          </div>
+          <p class="note at-fine">Completed (called + already queued): <b id="atStatCompleted">0</b> &middot;
+             Session status: <b id="atOverallStatus">&mdash;</b></p>
+          <div class="tote-table-wrap">
+            <table class="tote-table">
+              <thead><tr><th>Tote</th><th>Priority</th><th>Zone</th><th>Instance</th><th>Attempts</th><th>Verdict</th></tr></thead>
+              <tbody id="atResultsBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <div class="log-header">
+          <span class="log-title">Auto mode log</span>
+          <div class="log-legend">
+            <span class="ll-item op-ok"><i class="ll-dot"></i>Called</span>
+            <span class="ll-item op-warn">&#9679; Notice</span>
+            <span class="ll-item op-err">&#9679; N/A</span>
+            <span class="ll-item op-ignore">&#9679; Cooldown</span>
+          </div>
+        </div>
+        <section class="log-panel" id="atLog" aria-live="polite"></section>
+      </div>
+      </div>
+      </div>
+    </section>
+
+    <section id="tab-pullerLogs" class="tab-panel hidden">
+      <header class="screen-head">
+        <div class="screen-head-id">
+          <span class="h-ico"><i class="ico" data-i="file"></i></span>
+          <div><h3>Pull Logs</h3><p class="screen-sub">Manual and automatic pull sessions, one record per session</p></div>
+        </div>
+        <div class="screen-head-actions">
+          <button class="ghost" id="pullerLogsExportBtn" title="Download today's sessions as CSV, one row per tote"><i class="ico" data-i="download"></i>Export CSV</button>
+          <button class="primary" id="pullerLogsRefreshBtn"><i class="ico" data-i="refresh"></i>Refresh</button>
+        </div>
+      </header>
+      <details class="info-note">
+        <summary><i class="ico" data-i="info"></i>What this screen does</summary>
+        <p>Every Manual and Auto Tote Puller session in one place - one record per session, expand it to see each tote and its result. <b>Live</b> shows the latest 100 sessions as they finish; pick a day or a date range (IST) to look further back - the search then finds a tote or employee across the whole range. Click a tote or an employee ID to see all their sessions. Export CSV downloads the selected range with one row per tote. Read-only: opening this never starts, stops or affects a tote operation.</p>
+      </details>
+
+      <div class="panel pl-range">
+        <div class="pl-range-row">
+          <div class="al-seg" id="pullerLogsRange" role="group" aria-label="Which sessions">
+            <button type="button" data-range="LIVE" class="active"><span class="pl-live-dot"></span>Live</button>
+            <button type="button" data-range="TODAY">Today</button>
+            <button type="button" data-range="YESTERDAY">Yesterday</button>
+            <button type="button" data-range="7D">Last 7 days</button>
+            <button type="button" data-range="30D">Last 30 days</button>
+            <button type="button" data-range="CUSTOM"><i class="ico" data-i="clock"></i>Custom</button>
+          </div>
+          <div class="pl-custom hidden">
+            <input type="date" id="pullerLogsFrom" aria-label="From date" />
+            <span class="note">to</span>
+            <input type="date" id="pullerLogsTo" aria-label="To date" />
+            <button type="button" class="primary" id="pullerLogsApply">Show</button>
+          </div>
+          <span class="pl-range-note" id="pullerLogsRangeNote">Latest 100 &middot; live</span>
+        </div>
+      </div>
+
+      <div class="pl-stats" id="pullerLogsStats" aria-live="polite"></div>
+      <div class="panel">
+        <div class="pl-toolbar">
+          <div class="pl-filters">
+            <div class="al-seg" id="pullerLogsKind" role="group" aria-label="Show sessions">
+              <button type="button" data-kind="ALL" class="active">All</button>
+              <button type="button" data-kind="MANUAL"><span class="pl-dot manual"></span>Manual</button>
+              <button type="button" data-kind="AUTO"><span class="pl-dot auto"></span>Auto</button>
+            </div>
+          </div>
+          <div class="pl-tools">
+            <input type="search" id="pullerLogsSearch" class="pl-search" placeholder="Find a tote or employee ID" aria-label="Find a tote or employee ID" autocomplete="off" />
+          </div>
+        </div>
+        <div class="pl-legend note"><span><i class="pl-bar-ok"></i>Called</span><span><i class="pl-bar-queued"></i>Already queued</span><span><i class="pl-bar-na"></i>Not available</span><span><i class="pl-bar-other"></i>Other</span></div>
+        <div id="pullerLogsContainer" class="oplog"></div>
+        <div class="pl-more" id="pullerLogsMore"></div>
+      </div>
+    </section>
+
+    <section id="tab-lockedToteAnalytics" class="tab-panel hidden">
+      <header class="screen-head">
+        <div class="screen-head-id">
+          <span class="h-ico"><i class="ico" data-i="lock"></i></span>
+          <div><h3>Locked Tote Analytics</h3><p class="screen-sub">Reported, counted, ghost and repeat totes - how cycle counts really happen</p></div>
+        </div>
+        <div class="screen-head-actions">
+          <div class="al-seg" id="ltaRange" role="group" aria-label="Range">
+            <button type="button" data-r="today">Today</button><button type="button" data-r="yesterday">Yesterday</button><button type="button" data-r="7d" class="active">Last 7 days</button><button type="button" data-r="30d">Last 30 days</button>
+          </div>
+          <button class="primary" id="ltaRefreshBtn"><i class="ico" data-i="refresh"></i>Refresh</button>
+        </div>
+      </header>
+      <details class="info-note">
+        <summary><i class="ico" data-i="info"></i>How totes are classified</summary>
+        <p><b>Report</b> - a SHORT discrepancy on a tote at a picking station; it locks the tote and asks for a cycle count. <b>Proper CC</b> - a GTP stock check of a tote reported in the 3 days before it (one report counts for one check). <b>Ghost tote</b> - a stock check with no report before it: the tote was called manually - through the AOS Manual or Auto Puller, or outside AOS (Quadron / GTP directly). <b>Purged</b> - counted inside a Manual Puller purge; never a ghost.</p>
+        <p><b>Repeat tote</b> - the same tote counted again within 48 hours. <b>Repeat SKU</b> - another tote counted within 48 hours holding a SKU that came up SHORT in a reported tote's count. Each repeat keeps its own class, so you see whether it was reported or called manually. Outcome of a count: <b>All ALRIGHT</b> matched the system (a false report or a needless call), <b>Short</b> / <b>Excess</b> less / more than the system, <b>Bermuda</b> nothing found. Days run 06:00 to 06:00 IST. Read-only.</p>
+      </details>
+
+      <div class="ut-status lta-status"><span class="note" id="ltaStatus">Loading&hellip;</span></div>
+      <div class="error hidden" id="ltaError"></div>
+
+      <div class="ot-kpis lta-kpis" id="ltaKpis"></div>
+
+      <div class="lta-two">
+        <div class="panel">
+          <div class="ut-card-head"><h3>What the counts found</h3><span class="note">counts by class and outcome</span></div>
+          <div class="lta-tablewrap"><table class="lta-table" id="ltaMatrix"></table></div>
+        </div>
+        <div class="panel">
+          <div class="ut-card-head"><h3>Day by day</h3><span class="note">newest first</span></div>
+          <div class="lta-tablewrap lta-tall"><table class="lta-table" id="ltaDaily"></table></div>
+        </div>
+      </div>
+
+      <div class="lta-two">
+        <div class="panel">
+          <div class="ut-card-head"><h3>GTP stations</h3><span class="note">where the counts happen - most ghosts first</span></div>
+          <div class="lta-tablewrap lta-tall"><table class="lta-table" id="ltaGtp"></table></div>
+        </div>
+        <div class="panel">
+          <div class="ut-card-head"><h3>Reporting stations</h3><span class="note">who reports - and how often the count found nothing wrong</span></div>
+          <div class="lta-tablewrap lta-tall"><table class="lta-table" id="ltaRep"></table></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="ut-card-head">
+          <h3>Totes</h3>
+          <div class="lta-list-tools">
+            <input type="search" id="ltaSearch" placeholder="Find a tote, station or user" aria-label="Find a tote, station or user" autocomplete="off" />
+            <button class="ghost" id="ltaCsvBtn"><i class="ico" data-i="download"></i>Export list</button>
+          </div>
+        </div>
+        <div class="al-seg lta-tabs" id="ltaTabs" role="group" aria-label="List"></div>
+        <div class="lta-tablewrap lta-tall"><table class="lta-table" id="ltaList"></table></div>
+        <p class="note lta-list-note" id="ltaListNote"></p>
+      </div>
+    </section>
+
+    <section id="tab-asrsPerformance" class="tab-panel hidden">
+      <header class="screen-head">
+        <div class="screen-head-id">
+          <span class="h-ico"><i class="ico" data-i="trend"></i></span>
+          <div><h3>ASRS Performance</h3><p class="screen-sub">The One Pager kept day by day - month to date and daily averages</p></div>
+        </div>
+        <div class="screen-head-actions">
+          <div class="ap-month" role="group" aria-label="Month">
+            <button type="button" class="ghost" id="apPrevBtn" title="Previous month"><i class="ico" data-i="chevright"></i></button>
+            <span id="apMonthLabel">&nbsp;</span>
+            <button type="button" class="ghost" id="apNextBtn" title="Next month"><i class="ico" data-i="chevright"></i></button>
+          </div>
+          <button class="ghost" id="apFillBtn" title="Save the days of this month that are missing"><i class="ico" data-i="refresh"></i>Fill missing days</button>
+          <button class="ghost" id="apCsvBtn"><i class="ico" data-i="download"></i>Export CSV</button>
+        </div>
+      </header>
+      <details class="info-note">
+        <summary><i class="ico" data-i="info"></i>What this screen does</summary>
+        <p>Every morning at <b>06:05 IST</b> the server saves the One Pager for the day before - its Shift C has closed by then, so production, cycle count and compaction are final; locked totes, outside totes, utilisation and aisle occupancy are recorded as they stand at that moment. The month to date (MTD) totals and the daily averages here move as each day is added.</p>
+        <p>Days the server missed are filled in by themselves (or with <b>Fill missing days</b>). For those, production, cycle count and compaction are rebuilt for that date; locked, outside and utilisation figures exist only if someone generated a One Pager for that date at the time - otherwise they are blank, never zero. Read-only: nothing here changes any operation.</p>
+      </details>
+
+      <div class="ut-status ap-status"><span class="note" id="apStatus">Loading&hellip;</span></div>
+      <div class="error hidden" id="apError"></div>
+
+      <div class="ap-kpis" id="apKpis"></div>
+
+      <div class="panel" id="apTablePanel">
+        <div class="ut-card-head"><h3>Every day</h3><span class="note">saved by: <b>Auto</b> 06:05 save &middot; <b>Catch-up</b> saved later &middot; <b>Rebuilt</b> shift figures only</span></div>
+        <div class="ap-tablewrap"><table class="ap-table" id="apTable"></table></div>
+      </div>
+    </section>
+
+    <section id="tab-onePagerReport" class="tab-panel hidden">
+      <header class="screen-head">
+        <div class="screen-head-id">
+          <span class="h-ico"><i class="ico" data-i="report"></i></span>
+          <div><h3>One Pager Report</h3><p class="screen-sub">The daily ASRS snapshot, or any range of days, ready to share</p></div>
+        </div>
+        <div class="screen-head-actions">
+          <div class="al-seg opr-mode" id="oprModeSeg" role="group" aria-label="Report type">
+            <button type="button" data-mode="daily" class="active"><i class="ico" data-i="report"></i>Daily report</button>
+            <button type="button" data-mode="range"><i class="ico" data-i="clock"></i>Day-range report</button>
+          </div>
+        </div>
+      </header>
+      <details class="info-note">
+        <summary><i class="ico" data-i="info"></i>What this screen does</summary>
+        <p><b>Daily report:</b> Locked Totes, Compaction, CC Done / Discrepancies / Station Coverage, Totes In ASRS, Tote Utilisation, Outside Totes, ASRS Production and Aisle Occupancy - every section fetched fresh on Generate, never dependent on another screen having refreshed. Compaction, CC, Station Coverage and ASRS Production use the <strong>Report date</strong> for their A/B/C shift windows; every other section is the live, current state whatever the date. Outside Totes counts only totes classified as <strong>Outside Tote</strong> (not Bad Tracker), split into 12&ndash;24 hours and over 24 hours.</p>
+        <p><b>Day-range report:</b> ASRS Production, CC Metrics and Compaction / Tote Freed, one row per day with a TOTAL and AVERAGE row - for a 15-day (or any) review. Locked Totes, Utilisation, Outside Totes and Aisle Occupancy are right-now snapshots with no per-day history, so they are only in the daily report.</p>
+      </details>
+
+      <div class="opr-view" id="oprDaily">
+        <div class="panel opr-setup">
+          <div class="ut-card-head">
+            <h3>Report settings</h3>
+            <button class="primary" id="oprGenerateBtn"><i class="ico" data-i="refresh"></i>Generate report</button>
+          </div>
+          <div class="at-settings opr-settings">
+            <div class="at-tile queue">
+              <div class="at-tile-head"><span>Report date</span></div>
+              <div class="at-tile-val"><input type="date" id="oprReportDate" aria-label="Report date" /></div>
+              <small>shift windows for production, compaction and CC</small>
+            </div>
+          <div class="at-tile call">
+            <div class="at-tile-head"><span>TL Lens</span></div>
+            <div class="at-tile-val"><input type="number" min="1" id="oprCapLargeLens" placeholder="300" aria-label="TL Lens capacity" /><span>/ tote</span></div>
+            <small>large tote, lens</small>
+          </div>
+          <div class="at-tile call">
+            <div class="at-tile-head"><span>TL Frame</span></div>
+            <div class="at-tile-val"><input type="number" min="1" id="oprCapLargeFrame" placeholder="200" aria-label="TL Frame capacity" /><span>/ tote</span></div>
+            <small>large tote, frame</small>
+          </div>
+          <div class="at-tile call">
+            <div class="at-tile-head"><span>TS Lens</span></div>
+            <div class="at-tile-val"><input type="number" min="1" id="oprCapSmallLens" placeholder="200" aria-label="TS Lens capacity" /><span>/ tote</span></div>
+            <small>small tote, lens</small>
+          </div>
+          <div class="at-tile call">
+            <div class="at-tile-head"><span>TS Frame</span></div>
+            <div class="at-tile-val"><input type="number" min="1" id="oprCapSmallFrame" placeholder="100" aria-label="TS Frame capacity" /><span>/ tote</span></div>
+            <small>small tote, frame</small>
+          </div>
+          </div>
+          <p class="note opr-setup-note"><span class="at-key queue"></span>Date <span class="at-key"></span>Utilisation capacity per tote &middot; blank capacities use the defaults shown</p>
+        </div>
+
+        <div class="opr-share">
+          <span class="ot-label">Export</span>
+          <div class="opr-share-btns">
+            <button class="ghost" id="oprCsvBtn" disabled><i class="ico" data-i="download"></i>Excel</button>
+            <button class="ghost" id="oprPngBtn" disabled><i class="ico" data-i="download"></i>PNG image</button>
+          </div>
+        </div>
+
+        <div class="ut-status opr-status"><span class="note" id="oprStatus"></span></div>
+        <div class="error hidden" id="oprError"></div>
+
+        <div id="oprResult"></div>
+      </div>
+
+      <div class="opr-view" id="oprRange" hidden>
+        <div class="panel opr-setup">
+          <div class="ut-card-head">
+            <h3>Day range</h3>
+            <div class="opr-range-btns">
+              <button class="ghost" id="oprBulkXlsxBtn" disabled><i class="ico" data-i="download"></i>Excel</button>
+              <button class="primary" id="oprBulkGenerateBtn"><i class="ico" data-i="refresh"></i>Generate range report</button>
+            </div>
+          </div>
+          <div class="opr-range-row">
+            <div class="at-tile queue">
+              <div class="at-tile-head"><span>From</span></div>
+              <div class="at-tile-val"><input type="date" id="oprBulkStartDate" aria-label="Start date" /></div>
+            </div>
+            <div class="at-tile queue">
+              <div class="at-tile-head"><span>To</span></div>
+              <div class="at-tile-val"><input type="date" id="oprBulkEndDate" aria-label="End date" /></div>
+            </div>
+            <div class="opr-presets">
+              <span class="ot-label">Quick pick</span>
+              <div class="al-seg" id="oprRangePresets" role="group" aria-label="Quick range">
+                <button type="button" data-days="7">Last 7 days</button><button type="button" data-days="15" class="active">Last 15 days</button><button type="button" data-days="30">Last 30 days</button>
+              </div>
+              <span class="note" id="oprRangeDays"></span>
+            </div>
+          </div>
+          <p class="note opr-setup-note">ASRS Production, CC Metrics and Compaction / Tote Freed, one row per day with TOTAL and AVERAGE rows.</p>
+        </div>
+
+        <div class="ut-status opr-status"><span class="note" id="oprBulkStatus"></span></div>
+        <div class="error hidden" id="oprBulkError"></div>
+
+        <div id="oprBulkResult"></div>
+      </div>
+    </section>
+
+    <section id="tab-alerts" class="tab-panel hidden">
+      <header class="screen-head">
+        <div class="screen-head-id">
+          <span class="h-ico"><i class="ico" data-i="bell"></i></span>
+          <div><h3>Alerts</h3><p class="screen-sub">Global alerts need an acknowledgement; normal alerts stay on this page</p></div>
+        </div>
+        <div class="screen-head-actions">
+          <div class="al-seg" id="alertsViewSwitch" role="group" aria-label="Alerts view"><button type="button" data-view="list" class="active">Alerts</button><button type="button" data-view="analytics">Analytics</button></div>
+        </div>
+      </header>
+      <div id="alertsListView">
+      <div class="panel">
+        <p class="note">Global alerts are high-escalation: they appear in the alert popup for everyone until someone acknowledges them. Normal alerts appear on this page only. Add remarks to record what happened.</p>
+        <div class="dd-stats" id="alertsSummary"></div>
+        <div class="al-filters" id="alertsFilters">
+          <div class="al-seg"><button type="button" data-fs="OPEN">Open</button><button type="button" data-fs="ACKNOWLEDGED">Acknowledged</button><button type="button" data-fs="CLOSED">Closed with remark</button></div>
+          <div class="al-seg"><button type="button" data-fl="ALL">Every level</button><button type="button" data-fl="GLOBAL">Global</button><button type="button" data-fl="NORMAL">Normal</button></div>
+        </div>
+        <div id="alertsList" class="al-list"></div>
+      </div>
+      <div class="panel">
+        <h3><span class="h-ico"><i class="ico" data-i="info"></i></span>Active alert rules</h3>
+        <ul class="al-rules" id="alertsRules"></ul>
+      </div>
+      </div>
+      <div id="alertsAnalyticsView" hidden>
+        <div class="panel">
+          <div class="al-filters" id="alertsAnalyticsFilters">
+            <div class="al-seg" role="group" aria-label="Period"><button type="button" data-period="today">Today</button><button type="button" data-period="7d" class="active">7 days</button><button type="button" data-period="30d">30 days</button><button type="button" data-period="90d">90 days</button><button type="button" data-period="365d">1 year</button></div>
+            <span class="screen-fresh" id="alertsAnalyticsAt"></span>
+          </div>
+          <div id="alertsAnalytics" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-users" class="tab-panel hidden">
+      <header class="screen-head">
+        <div class="screen-head-id">
+          <span class="h-ico"><i class="ico" data-i="user"></i></span>
+          <div><h3>Users</h3><p class="screen-sub">Accounts and which panels each person can open</p></div>
+        </div>
+      </header>
+      <div class="panel">
+        <h3><span class="h-ico"><i class="ico" data-i="user"></i></span>Add a user</h3>
+        <p class="note">Creates a login for this website. Share the employee ID and password with the person; they can't change it themselves yet.</p>
+        <form id="userForm" class="user-form" autocomplete="off">
+          <label>Employee ID<input name="employeeId" required minlength="3" maxlength="64" autocomplete="off" placeholder="e.g. 12345"></label>
+          <label>Password<input name="password" type="password" required minlength="8" maxlength="128" autocomplete="new-password" placeholder="min 8 characters"></label>
+          <label>Role<select name="role"><option value="USER">User</option><option value="ADMIN">Admin</option></select></label>
+          <fieldset class="panel-picker" id="newUserPanels"><legend>Panels this user can open <span class="dd-note">(admins always see everything)</span></legend><div class="pp-actions"><button type="button" class="link" data-pp="all">All</button><button type="button" class="link" data-pp="none">None</button></div><div class="pp-grid" id="newUserPanelBoxes"></div></fieldset>
+          <button type="submit" class="primary">Create user</button>
+        </form>
+      </div>
+      <div class="panel">
+        <h3><span class="h-ico"><i class="ico" data-i="user"></i></span>Users <span class="dd-note" id="usersCount"></span></h3>
+        <div class="dd-scroll"><table class="dd-table"><thead><tr><th>Employee ID</th><th>Role</th><th>Panels</th><th>Status</th><th>Created</th><th></th></tr></thead><tbody id="usersBody"></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="tab-admin" class="tab-panel hidden">
+      <header class="screen-head">
+        <div class="screen-head-id">
+          <span class="h-ico"><i class="ico" data-i="shield"></i></span>
+          <div><h3>Active Queries</h3><p class="screen-sub">Running jobs - cancel any of them here. Finished pull sessions are in Pull Logs.</p></div>
+        </div>
+      </header>
+      <div class="panel">
+        <p><button class="ghost" id="refreshAdminBtn">Refresh</button></p>
+        <div class="admin-queries-scroll">
+          <table>
+            <thead>
+              <tr><th>Query</th><th>User</th><th>Operation</th><th>Status</th><th>Runtime</th><th>Start Time</th><th>Cancel Query</th></tr>
+            </thead>
+            <tbody id="adminQueriesBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+      </main>
+    </div>
+  </div>
+</div>
+
+<div class="alert-tray" id="alertTray" hidden aria-live="assertive"></div>
+<div id="toastHost" aria-live="polite"></div>
+<script src="/js/core/api.js"></script>
+<script src="/js/core/format.js"></script>
+<script src="/js/core/freshness.js"></script>
+<script src="/js/core/toast.js"></script>
+<script src="/js/core/ui.js"></script>
+<script src="/js/core/modal.js"></script>
+<script src="/js/core/mutationFlow.js"></script>
+<script src="/js/core/charts.js"></script>
+<script src="/js/core/nexsConnect.js"></script>
+<script src="/js/core/theme.js"></script>
+<script src="/js/core/alertsTray.js"></script>
+<script src="/js/core/autoReminder.js"></script>
+<script src="/js/core/live.js"></script>
+<script src="/js/core/sharedRun.js"></script>
+<script src="/js/core/sparkline.js"></script>
+<script src="/js/core/kpiCard.js"></script>
+<script src="/js/core/connectionStatus.js"></script>
+<script src="/js/core/operationLog.js"></script>
+<script src="/js/core/loginFx.js"></script>
+<script src="/js/features/toteUtilisation.js"></script>
+<script src="/js/features/lockedToteInfo.js"></script>
+<script src="/js/features/totePurge.js"></script>
+<script src="/js/core/toteListParser.js"></script>
+<script src="/js/features/tracker.js"></script>
+<script src="/js/features/asrsLocationsAudit.js"></script>
+<script src="/js/features/asrsLocations.js"></script>
+<script src="/js/features/aisleOccupancy.js"></script>
+<script type="module" src="/js/features/asrsLocations3d.js"></script>
+<script src="/js/features/cngValidator.js"></script>
+<script src="/js/features/bulkInventoryCheck.js"></script>
+<script src="/js/features/manualTotePuller.js"></script>
+<script src="/js/features/autoTotePuller.js"></script>
+<script src="/js/vendor/html2canvas.min.js"></script>
+<script src="/js/features/onePagerReport.js"></script>
+<script src="/js/features/asrsPerformance.js"></script>
+<script src="/js/features/lockedToteAnalytics.js"></script>
+<script src="/js/features/admin.js"></script>
+<script src="/js/features/users.js"></script>
+<script src="/js/features/alerts.js"></script>
+<script src="/js/features/pickingMonitor.js"></script>
+<script src="/js/features/dashboardDetail.js"></script>
+<script src="/js/features/dashboard.js"></script>
+<script src="/js/core/app.js"></script>
+</body>
+</html>

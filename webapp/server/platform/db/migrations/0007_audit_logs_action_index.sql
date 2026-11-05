@@ -1,0 +1,39 @@
+-- Database review remediation (2026-09-04) - Query Audit and Indexing.
+-- Purely additive: one new secondary index, no data touched, no existing
+-- column/table altered. Safe to roll back with a plain
+-- `DROP INDEX idx_audit_logs_action_id ON audit_logs;` if ever needed.
+--
+-- EVIDENCE (not a guess - see the audit report for the full methodology):
+-- auditLog.listByActions() - the query behind BOTH GET /admin/operation-logs
+-- (Admin's Operation Log) and GET /tote-engine/operation-logs (the Manual-
+-- Tote-Puller-scoped log) - is:
+--
+--   SELECT a.*, u.employee_id, u.role FROM audit_logs a
+--     JOIN users u ON u.id = a.user_id
+--    WHERE a.action IN (...) ORDER BY a.id DESC LIMIT ?
+--
+-- Run against the real production database (read-only EXPLAIN, 2026-09-04):
+--   type: ALL, key: null, rows: 5689, Extra: "Using where; Using temporary;
+--   Using filesort" - a full table scan on every call, because `action` has
+--   no index and MySQL cannot use idx_audit_user or idx_audit_created_at to
+--   satisfy a WHERE on `action`. audit_logs had 5796 rows at measurement
+--   time and grows on every single query this app creates (QUERY_CREATED
+--   alone was 2378 of those 5796 rows - routine operational noise, not the
+--   rare "operation log" entries this query is actually looking for), so
+--   this scan only gets more expensive over time, not less.
+--
+-- Composite (action, id) - not action alone - because the query also does
+-- ORDER BY a.id DESC: with this index, MySQL can range-scan each requested
+-- action value already in id order (a reverse index scan, no separate
+-- sort/temp table needed) and merge the small number of per-action streams,
+-- stopping as soon as LIMIT is satisfied - a small number of index-ordered
+-- reads instead of a full-table scan + filesort over the whole table.
+--
+-- Every OTHER candidate table/query checked during this audit
+-- (queries/nexs_asrs_dump_rows/sessions/classification_tote_state) was
+-- confirmed via EXPLAIN to already be using an appropriate existing index
+-- for its real access pattern - this is the one place the evidence actually
+-- supported adding something new. See the audit report's own "Queries/
+-- indexes optimized" section for the full comparison.
+
+ALTER TABLE audit_logs ADD INDEX idx_audit_logs_action_id (action, id);

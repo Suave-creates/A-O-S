@@ -1,0 +1,12 @@
+# AOS — ASRS Intelligence & Automation
+
+- **Read `RULES.md` and `STRUCTURE.md` before any change.** `RULES.md` is the contract (what is allowed); `STRUCTURE.md` is the map (where code lives, how requests and live data flow). `server/test/platform/structure.test.js` enforces the mechanical parts.
+- Stack: Express + vanilla JS (no build) + MySQL. Run from `webapp/`: `npm start`, `npm test`, `npm run migrate`. Single test: `node --env-file-if-exists=.env --test <file>`.
+- Preserve existing behaviour, calculations, definitions (CC Done / Bermuda / Purged, priorities), integrations and permissions unless the task explicitly changes them. If the repo differs from the docs, say whether it is intentional, legacy or a defect **before** changing it. Don't silently bypass a rule or do a broad rewrite.
+- Audits and planning: don't edit files unless asked. For a major redesign, propose the direction and show one representative AOS screen first; implement broadly only after approval. Never copy another product's UI.
+- One feature = `server/features/<name>/` + one file in `public/js/features/`. Dependencies point down only (features → platform/integrations; live → all). Features never import each other (tracked exceptions only shrink).
+- A browser never triggers an upstream call or a login, and never polls. Live data = a feed in `server/live/` + `Live.subscribe`. Only `integrations/logins/*` log in; NexS is on-demand via `nexsLease` / `NexsConnect.run`.
+- New routes: `requireAuth` + `requirePanel("<key>")` in `server/index.js`; new live topics go in `TOPIC_PANELS`. DB: fewest tables/columns, a new numbered migration only, never edit an applied one.
+- UI: tokens only (no hard-coded colours), generated icon set, both themes, reduced motion, loading/empty/error/stale states. Never show a fabricated number or turn a failure into zero.
+- Tests mirror the source tree. The "~52 failures in 5 MySQL-dependent files" baseline (api, classificationTimestamps, nexsAsrsDumpMysqlStore, syncToCompany, toteUtilisationMysql) is historical — re-check before relying on it, and never add to it.
+- This project is not under version control: no git, nothing is committed or pushed - edit the files directly. Never print credentials from `.env`; keep `.env.example` aligned with `server/config.js`. Delete dead code; comments say *why*. Update `STRUCTURE.md` whenever you add, remove or move a folder, route, feature or shared service.

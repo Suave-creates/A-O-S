@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "ASO Test",
+  "version": "1.0",
+  "description": "TEST BUILD — ASRS automation console — tote pulling, one-click purge analysis, tote tracking, and Cycle Count reconciliation for NXS fulfilment. Not for production use.",
+  "permissions": [
+    "cookies",
+    "storage",
+    "activeTab",
+    "scripting",
+    "alarms",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://192.168.24.230/*",
+    "http://192.168.24.230/*",
+    "https://script.google.com/*",
+    "https://script.googleusercontent.com/*",
+    "https://app.nexs.lenskart.com/*",
+    "<all_urls>"
+  ],
+  "action": {
+    "default_title": "ASO Test — open (TEST BUILD)",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background/index.js"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

@@ -1,0 +1,7 @@
+# LF everywhere: the source-inspection safety tests (e.g. lockedToteInfoSafety) misread CRLF files.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.ico binary
+*.mp4 binary
+*.xlsx binary

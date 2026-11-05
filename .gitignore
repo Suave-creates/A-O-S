@@ -1,0 +1,20 @@
+# Secrets - real credentials live only on the server, see webapp/.env.example
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*service-account*.json
+
+# Dependencies and local runtime data
+node_modules/
+.local-dev-data/
+
+# Logs
+*.log
+
+# Local tooling / OS
+.claude/
+.vscode/
+Thumbs.db
+.DS_Store
